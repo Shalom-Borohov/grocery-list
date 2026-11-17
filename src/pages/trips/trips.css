@@ -1,0 +1,76 @@
+.trips-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px var(--app-gutter) 0;
+}
+
+.trips-title-row .page-title {
+  padding: 0;
+}
+
+.trips-title-row .segmented .choice {
+  padding: 0 14px;
+  font-size: 0.875rem;
+}
+
+.spending-block {
+  margin: 10px var(--app-gutter) 0;
+  padding: 16px;
+  border-radius: var(--app-radius-card);
+  background: var(--app-yellow);
+  color: var(--app-ink);
+}
+
+.spending-block p {
+  margin: 0;
+}
+
+.spending-period,
+.spending-detail {
+  font-size: 0.875rem;
+}
+
+.spending-period {
+  font-weight: 500;
+}
+
+.spending-total {
+  margin: 2px 0;
+  font-size: 2.75rem;
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: start;
+}
+
+.spending-missing {
+  margin: 8px 0 0;
+  padding: 0 var(--app-gutter);
+}
+
+.trips-list {
+  margin-top: 14px;
+}
+
+.trips-month {
+  margin: 6px 4px 0;
+}
+
+.trip-link {
+  display: block;
+}
+
+.trip-total {
+  flex: none;
+  padding-inline-end: 6px;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.trip-total.is-missing {
+  color: var(--app-ink-soft);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}

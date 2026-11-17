@@ -1,0 +1,67 @@
+.settings-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px var(--app-gutter) 0;
+}
+
+.settings-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.settings-tile h2 {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+}
+
+.settings-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.settings-note,
+.settings-counts {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.settings-counts {
+  font-weight: 500;
+}
+
+.settings-ready {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--app-ink-soft);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.settings-version {
+  margin: 6px 0 0;
+  text-align: center;
+}
+
+.feedback-body .note-field-text.field {
+  min-height: 140px;
+}
+
+.feedback-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 6px;
+  line-height: 1.4;
+}
+
+.feedback-notes p {
+  margin: 0;
+}

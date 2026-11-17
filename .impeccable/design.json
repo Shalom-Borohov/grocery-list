@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T00:00:00Z",
+  "title": "Design System: מצרכים",
+  "extensions": {
+    "colorMeta": {
+      "sale-yellow": { "role": "primary", "displayName": "Sale-Tag Yellow", "canonical": "#ffd21f", "tonalRamp": ["#3d3000", "#665000", "#8f7000", "#bf9600", "#f2b900", "#ffd21f", "#ffe57a", "#fff6cc"] },
+      "warning-red": { "role": "tertiary", "displayName": "Warning Red", "canonical": "#b3261e", "tonalRamp": ["#3a0b08", "#5c120d", "#821a14", "#b3261e", "#d04a40", "#e57d75", "#f2b3ae", "#fbe3e1"] },
+      "ink": { "role": "neutral", "displayName": "Shelf Ink", "canonical": "#14161a", "tonalRamp": ["#14161a", "#2c2d31", "#3f4349", "#555a61", "#80868e", "#aab1ba", "#cdd2d7", "#e9ecef"] },
+      "ink-soft": { "role": "neutral", "displayName": "Soft Ink", "canonical": "#555a61", "tonalRamp": ["#1d1f22", "#30333a", "#43474e", "#555a61", "#6f747b", "#8c9097", "#b0b4ba", "#dadde1"] },
+      "shelf-grey": { "role": "neutral", "displayName": "Shelf Grey", "canonical": "#e9ecef", "tonalRamp": ["#2a2d31", "#4a4f55", "#6d7379", "#9ba1a8", "#cdd2d7", "#dde1e5", "#e9ecef", "#f5f6f8"] },
+      "label-white": { "role": "neutral", "displayName": "Label White", "canonical": "#ffffff", "tonalRamp": ["#2a2c2f", "#4d5054", "#777a7f", "#a3a6aa", "#cdd0d3", "#e3e6ea", "#f3f4f6", "#ffffff"] },
+      "taken-grey": { "role": "neutral", "displayName": "Taken Grey", "canonical": "#dde1e5", "tonalRamp": ["#26292d", "#43474c", "#62676d", "#8c9298", "#b9bec4", "#cdd2d7", "#dde1e5", "#eef0f2"] },
+      "taken-text": { "role": "neutral", "displayName": "Taken Text", "canonical": "#5a5f66", "tonalRamp": ["#1e2023", "#33363a", "#464a50", "#5a5f66", "#73787f", "#90949a", "#b4b8bd", "#dcdee1"] },
+      "divider": { "role": "neutral", "displayName": "Divider", "canonical": "#e3e6ea", "tonalRamp": ["#282b2e", "#474a4f", "#686c72", "#94989e", "#c3c7cc", "#d5d9dd", "#e3e6ea", "#f2f3f5"] },
+      "taken-divider": { "role": "neutral", "displayName": "Taken Divider", "canonical": "#cdd2d7", "tonalRamp": ["#23262a", "#3e4247", "#5c6167", "#868c92", "#aab1ba", "#cdd2d7", "#e0e3e7", "#f0f2f4"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The one big numeral per screen: items left in the shop tile (2.875rem); the spending total and item page amount use 2.75rem." },
+      "headline": { "displayName": "Headline", "purpose": "Page titles and the נשארו title." },
+      "numeral": { "displayName": "Row Numeral", "purpose": "The amount in each label's fixed column, the stepper value, the item name on its page." },
+      "title": { "displayName": "Title", "purpose": "Sheet titles and saved-set card names." },
+      "body-strong": { "displayName": "Body Strong", "purpose": "The item name on a label row; sheet actions." },
+      "body": { "displayName": "Body", "purpose": "Fields, notes and button text (buttons at 500)." },
+      "label": { "displayName": "Label", "purpose": "The one secondary line under a name, quiet text, section headings at 500." },
+      "caption": { "displayName": "Caption", "purpose": "Units under an amount and tab labels." }
+    },
+    "shadows": [
+      { "name": "label", "value": "0 1px 2px rgba(20, 22, 26, 0.08)", "purpose": "Label rows, panels, set cards, receipt thumbnails, the selected segment." },
+      { "name": "raised", "value": "0 4px 14px rgba(20, 22, 26, 0.1)", "purpose": "The item page's main card only." }
+    ],
+    "motion": [
+      { "name": "press", "value": "opacity 120ms ease-out", "purpose": "Buttons and links dim to 0.65 on press." },
+      { "name": "entry-sink", "value": "200ms ease-out, translateY(-12px) and opacity 0.6 to rest", "purpose": "A taken label sliding below the waiting ones; a plain swap under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "375px", "purpose": "Single design and check width (iPhone SE Home Screen app, 375x647)." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Label Row",
+      "kind": "custom",
+      "refersTo": "label-row",
+      "description": "The shelf label: fixed amount column, name, one secondary line, trailing tick ring. One tap takes the item.",
+      "html": "<div dir=\"rtl\" class=\"ds-list\"><button class=\"ds-label-row\"><span class=\"ds-col\"><span class=\"ds-num\">2</span><span class=\"ds-unit\">ק\"ג</span></span><span class=\"ds-body\"><span class=\"ds-text\"><span class=\"ds-name\">עגבניות שרי</span><span class=\"ds-sec\">רק מהאריזה הסגורה</span></span><span class=\"ds-ring\"></span></span></button><button class=\"ds-label-row\"><span class=\"ds-col\"><span class=\"ds-num\">1</span></span><span class=\"ds-body\"><span class=\"ds-text\"><span class=\"ds-name\">יוגורט וניל</span><span class=\"ds-sec ds-warn\">לא לקנות שוב</span></span><span class=\"ds-ring\"></span></span></button><button class=\"ds-label-row is-taken\"><span class=\"ds-col\"><span class=\"ds-num\">2</span><span class=\"ds-unit\">ליטר</span></span><span class=\"ds-body\"><span class=\"ds-text\"><span class=\"ds-name\">חלב 3%</span></span><span class=\"ds-ring is-ticked\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg></span></span></button></div>",
+      "css": ".ds-list { display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #e9ecef; font-family: Rubik, -apple-system, sans-serif; } .ds-label-row { display: flex; align-items: stretch; min-height: 60px; width: 100%; padding: 0; border: 0; border-radius: 14px; background: #ffffff; box-shadow: 0 1px 2px rgba(20,22,26,0.08); color: #14161a; font: inherit; text-align: start; transition: opacity 120ms ease-out; } .ds-label-row:active { opacity: 0.65; } .ds-label-row:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; } .ds-col { display: flex; flex: none; flex-direction: column; align-items: center; justify-content: center; width: 58px; border-inline-end: 1px solid #e3e6ea; } .ds-num { font-size: 1.625rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; } .ds-unit { margin-top: 2px; color: #555a61; font-size: 0.6875rem; } .ds-body { display: flex; flex: 1; align-items: center; gap: 10px; padding: 8px 8px 8px 12px; } .ds-text { display: flex; flex: 1; flex-direction: column; min-width: 0; } .ds-name { font-size: 1.0625rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-sec { margin-top: 2px; color: #555a61; font-size: 0.8125rem; } .ds-warn { color: #b3261e; font-weight: 500; } .ds-ring { display: grid; place-items: center; box-sizing: border-box; width: 28px; height: 28px; border: 2px solid #14161a; border-radius: 50%; color: #14161a; } .ds-ring.is-ticked { background: #ffd21f; } .ds-label-row.is-taken { background: #dde1e5; box-shadow: none; color: #5a5f66; } .ds-label-row.is-taken .ds-name { text-decoration: line-through; } .ds-label-row.is-taken .ds-col { border-inline-end-color: #cdd2d7; } .ds-label-row.is-taken .ds-unit { color: #5a5f66; }"
+    },
+    {
+      "name": "Shop Header Count Tile",
+      "kind": "custom",
+      "refersTo": "count-tile",
+      "description": "The one display numeral: items left in a yellow tile, with the outline finish pill and round add button.",
+      "html": "<div dir=\"rtl\" class=\"ds-shop-header\"><span class=\"ds-tile\">5</span><span class=\"ds-count-text\"><span class=\"ds-count-title\">נשארו</span><span class=\"ds-count-detail\">2 בעגלה · 1 לא היה</span></span><button class=\"ds-outline\">סיום</button><button class=\"ds-round\" aria-label=\"הוספה\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M10.5 3h3v7.5H21v3h-7.5V21h-3v-7.5H3v-3h7.5z\"/></svg></button></div>",
+      "css": ".ds-shop-header { display: flex; align-items: center; gap: 12px; min-height: 96px; padding: 12px 16px; background: #e9ecef; font-family: Rubik, -apple-system, sans-serif; color: #14161a; } .ds-tile { display: grid; place-items: center; flex: none; width: 72px; height: 72px; border-radius: 18px; background: #ffd21f; color: #14161a; font-size: 2.875rem; font-weight: 800; line-height: 1; } .ds-count-text { display: flex; flex: 1; flex-direction: column; min-width: 0; } .ds-count-title { font-size: 1.75rem; font-weight: 800; line-height: 1.1; } .ds-count-detail { margin-top: 4px; color: #555a61; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-outline { min-height: 44px; padding: 0 16px; border: 2px solid #14161a; border-radius: 999px; background: none; color: #14161a; font: inherit; font-size: 0.9375rem; font-weight: 500; transition: opacity 120ms ease-out; } .ds-round { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #14161a; color: #ffffff; transition: opacity 120ms ease-out; } .ds-outline:active, .ds-round:active { opacity: 0.65; } .ds-outline:focus-visible, .ds-round:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Yellow block with ink text; full width in footers.",
+      "html": "<button class=\"ds-btn-primary\">התחלת קנייה</button>",
+      "css": ".ds-btn-primary { min-height: 50px; padding: 0 22px; border: 0; border-radius: 16px; background: #ffd21f; color: #14161a; font-family: Rubik, -apple-system, sans-serif; font-size: 1rem; font-weight: 500; transition: opacity 120ms ease-out; } .ds-btn-primary:active { opacity: 0.65; } .ds-btn-primary:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.45; }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "White block for neutral actions on the grey ground.",
+      "html": "<div class=\"ds-ground\"><button class=\"ds-btn-quiet\">ייצוא גיבוי</button></div>",
+      "css": ".ds-ground { padding: 16px; background: #e9ecef; } .ds-btn-quiet { min-height: 44px; padding: 0 18px; border: 0; border-radius: 14px; background: #ffffff; color: #14161a; font-family: Rubik, -apple-system, sans-serif; font-size: 0.9375rem; font-weight: 500; transition: opacity 120ms ease-out; } .ds-btn-quiet:active { opacity: 0.65; } .ds-btn-quiet:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Danger Text Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive action as red words only.",
+      "html": "<button class=\"ds-btn-danger\">מחיקת המצרך</button>",
+      "css": ".ds-btn-danger { min-height: 48px; padding: 0 22px; border: 0; border-radius: 14px; background: none; color: #b3261e; font-family: Rubik, -apple-system, sans-serif; font-size: 1rem; font-weight: 500; transition: opacity 120ms ease-out; } .ds-btn-danger:active { opacity: 0.65; } .ds-btn-danger:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Choice Chips and Segmented Control",
+      "kind": "chip",
+      "refersTo": "choice",
+      "description": "White pills that turn yellow when chosen; the segmented pair (verdict, month/year) uses a grey track with a white selected block.",
+      "html": "<div dir=\"rtl\" class=\"ds-ground\"><div class=\"ds-choices\"><button class=\"ds-choice\" aria-pressed=\"true\">יחידות</button><button class=\"ds-choice\" aria-pressed=\"false\">ק\"ג</button><button class=\"ds-choice\" aria-pressed=\"false\">ליטר</button></div><div class=\"ds-seg\"><button class=\"ds-seg-choice\" aria-pressed=\"true\">לקנות שוב</button><button class=\"ds-seg-choice\" aria-pressed=\"false\">לא לקנות שוב</button></div></div>",
+      "css": ".ds-ground { display: flex; flex-direction: column; gap: 16px; padding: 16px; background: #e9ecef; font-family: Rubik, -apple-system, sans-serif; } .ds-choices { display: flex; flex-wrap: wrap; gap: 8px; } .ds-choice { min-height: 44px; padding: 0 15px; border: 0; border-radius: 999px; background: #ffffff; color: #14161a; font: inherit; font-size: 0.9375rem; transition: opacity 120ms ease-out; } .ds-choice[aria-pressed='true'] { background: #ffd21f; font-weight: 500; } .ds-choice:active, .ds-seg-choice:active { opacity: 0.65; } .ds-choice:focus-visible, .ds-seg-choice:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; } .ds-seg { display: grid; grid-auto-columns: 1fr; grid-auto-flow: column; gap: 3px; padding: 3px; border-radius: 14px; background: #dde1e5; } .ds-seg-choice { min-height: 44px; padding: 0 8px; border: 0; border-radius: 11px; background: transparent; color: #555a61; font: inherit; font-size: 0.9375rem; } .ds-seg-choice[aria-pressed='true'] { background: #ffffff; box-shadow: 0 1px 2px rgba(20,22,26,0.08); color: #14161a; font-weight: 500; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Borderless white block with a soft-ink label above.",
+      "html": "<div dir=\"rtl\" class=\"ds-ground\"><label class=\"ds-field-wrap\"><span class=\"ds-field-label\">שם</span><input class=\"ds-field\" placeholder=\"למשל: חלב 3%\"></label></div>",
+      "css": ".ds-ground { padding: 16px; background: #e9ecef; font-family: Rubik, -apple-system, sans-serif; } .ds-field-wrap { display: flex; flex-direction: column; gap: 6px; } .ds-field-label { padding: 0 6px; color: #555a61; font-size: 0.875rem; } .ds-field { box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 14px; border: 0; border-radius: 14px; background: #ffffff; color: #14161a; font: inherit; font-size: 1rem; caret-color: #14161a; } .ds-field::placeholder { color: #555a61; opacity: 1; } .ds-field:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "White four-tab bar; the selected tab is ink with a small yellow bar above its solid icon.",
+      "html": "<nav dir=\"rtl\" class=\"ds-tabs\"><a class=\"ds-tab is-selected\" href=\"#\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M4 5h3v3H4zm5 .5h11v2H9zM4 10.5h3v3H4zm5 .5h11v2H9zM4 16h3v3H4zm5 .5h11v2H9z\"/></svg><span>רשימה</span></a><a class=\"ds-tab\" href=\"#\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M6 2h12v20l-3-2-3 2-3-2-3 2zm3 5v2h6V7zm0 4v2h6v-2z\"/></svg><span>קניות</span></a><a class=\"ds-tab\" href=\"#\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M8 7a4 4 0 0 1 8 0h3l1 14H4L5 7zm2 0h4a2 2 0 0 0-4 0z\"/></svg><span>מצרכים</span></a><a class=\"ds-tab\" href=\"#\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M10.5 2h3l.5 2.6 2.2 1 2.3-1.4 2.1 2.1-1.4 2.3 1 2.2 2.6.5v3l-2.6.5-1 2.2 1.4 2.3-2.1 2.1-2.3-1.4-2.2 1-.5 2.6h-3l-.5-2.6-2.2-1-2.3 1.4-2.1-2.1 1.4-2.3-1-2.2L2 13.5v-3l2.6-.5 1-2.2-1.4-2.3 2.1-2.1 2.3 1.4 2.2-1zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z\"/></svg><span>הגדרות</span></a></nav>",
+      "css": ".ds-tabs { display: flex; border-top: 1px solid #e3e6ea; background: #ffffff; font-family: Rubik, -apple-system, sans-serif; } .ds-tab { position: relative; display: flex; flex: 1; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0 6px; color: #555a61; font-size: 0.6875rem; font-weight: 500; text-decoration: none; transition: opacity 120ms ease-out; } .ds-tab::before { position: absolute; top: 4px; left: 50%; width: 24px; height: 4px; border-radius: 2px; background: transparent; content: ''; transform: translateX(-50%); } .ds-tab.is-selected { color: #14161a; } .ds-tab.is-selected::before { background: #ffd21f; } .ds-tab:active { opacity: 0.65; } .ds-tab:focus-visible { outline: 2px solid #14161a; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Shelf Labels",
+    "overview": "Every item is the label on a supermarket shelf edge: a white card on a cool grey shelf, the amount to take set big in a fixed column where the price would be, and the lesson from last time on one line under the name. The system is built for a phone held in one hand in a shop aisle, so it reads in one glance down a single column of numerals, and one tap anywhere on a label takes the item.\n\nThe screens are calm and standard iOS underneath: Ionic iOS navigation, back buttons, sheets and a four-tab bar stay native. The world lives in the labels, in heavy Rubik numerals, and in one sale-tag yellow that only ever marks \"this is the number that matters\" or \"this one is done\". There is no costume: no paper texture, no price-tag die-cut, no patterns or dashed lines. Hebrew RTL throughout, with numerals isolated LTR and tabular.",
+    "keyCharacteristics": [
+      "White rounded labels (14px) on a cool grey ground, 8px apart, one soft shadow.",
+      "A fixed 58px amount column with a divider on every row, so amounts line up down the screen.",
+      "Rubik at three weights only (400, 500, 800); 800 for numerals and titles.",
+      "One accent, sale-tag yellow, always carrying ink on top of it.",
+      "Taken is grey, struck through and ticked, never colour alone."
+    ],
+    "rules": [
+      { "name": "The Ink-On-Yellow Rule", "body": "Anything yellow carries ink (#14161a) text or strokes; yellow never carries white and never appears as text colour.", "section": "colors" },
+      { "name": "The One Accent Rule", "body": "Yellow marks either the one number that matters on the screen or a done/selected state. It is not used for decoration, headings or borders.", "section": "colors" },
+      { "name": "The Red Is A Word Rule", "body": "Warning red is text only: a verdict, a \"לא היה\" mark, an error or a destructive action label. No red fills, badges or borders.", "section": "colors" },
+      { "name": "The One Big Numeral Rule", "body": "Each screen has at most one display numeral; every other number is a row numeral or body size.", "section": "typography" },
+      { "name": "The Three Weights Rule", "body": "Only 400, 500 and 800 are loaded. Do not ask for 600 or 700.", "section": "typography" },
+      { "name": "The Isolated Numeral Rule", "body": "Numbers and prices sit in an LTR-isolated, tabular span inside RTL text.", "section": "typography" },
+      { "name": "The Taken Sinks Rule", "body": "A taken label loses its shadow, takes the taken grey and moves below the waiting ones; it never floats.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put every list item in a label row with the fixed amount column, even when the amount is empty, so the column stays aligned.",
+      "Do keep the screen to one display numeral and one yellow focus.",
+      "Do mark state with a shape or a word as well as colour: struck through and ticked for taken, the words \"לא היה\" and \"לא לקנות שוב\" in red.",
+      "Do use solid filled SVG icons (`fill: currentColor`) at 16–30px.",
+      "Do keep 44px minimum tap targets and a 16px gutter on every screen.",
+      "Do put new screens on the shelf-grey ground with white 14–20px rounded blocks and native Ionic iOS navigation."
+    ],
+    "donts": [
+      "Don't put white text on yellow, or use yellow for headings, borders or decoration.",
+      "Don't use warning red as a fill, badge or border.",
+      "Don't add paper texture, price-tag costume, patterns, dotted or dashed lines, or ornamental bands.",
+      "Don't let a row wrap to a second secondary line; truncate and move the long text to the item page.",
+      "Don't use font weights other than 400, 500 and 800.",
+      "Don't put a decorative kicker or eyebrow above a title; a small line above a number is allowed only when it is data (the spending period)."
+    ]
+  }
+}

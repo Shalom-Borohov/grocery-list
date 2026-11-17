@@ -1,0 +1,110 @@
+.label-row {
+  display: flex;
+  align-items: stretch;
+  min-height: var(--app-row-height);
+  border-radius: var(--app-radius-row);
+  background: var(--app-card);
+  box-shadow: var(--app-shadow-card);
+}
+
+.label-row-column {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--app-amount-column);
+  border-inline-end: 1px solid var(--app-divider);
+  color: inherit;
+}
+
+.amount-numeral {
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.amount-numeral.is-large {
+  font-size: 2.75rem;
+}
+
+.amount-unit {
+  margin-top: 2px;
+  color: var(--app-ink-soft);
+  font-size: 0.6875rem;
+}
+
+.amount-unit.is-large {
+  font-size: 0.8125rem;
+}
+
+.label-row-body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding-block: 8px;
+  padding-inline: 12px 8px;
+  text-align: start;
+}
+
+.label-row-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label-row-name {
+  overflow: hidden;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label-row-secondary {
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--app-ink-soft);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label-row-photo {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.label-row.is-taken {
+  background: var(--app-taken-ground);
+  box-shadow: none;
+  color: var(--app-taken-text);
+}
+
+.label-row.is-taken .label-row-name {
+  text-decoration: line-through;
+}
+
+.label-row.is-taken .label-row-column {
+  border-inline-end-color: var(--app-taken-divider);
+}
+
+.label-row.is-taken .amount-unit,
+.label-row.is-taken .label-row-secondary {
+  color: var(--app-taken-text);
+}
+
+.label-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-row-gap);
+  margin: 0;
+  padding: 0 var(--app-gutter);
+  list-style: none;
+}

@@ -1,0 +1,31 @@
+.set-page {
+  padding-bottom: 24px;
+}
+
+.set-footer {
+  padding: 8px var(--app-gutter) 12px;
+  background: var(--app-ground);
+}
+
+.set-pour-button {
+  width: 100%;
+  font-size: 1.0625rem;
+}
+
+.set-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px var(--app-gutter) 0;
+}
+
+.set-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0 32px;
+}
+
+.set-page .page-title {
+  padding-bottom: 12px;
+}

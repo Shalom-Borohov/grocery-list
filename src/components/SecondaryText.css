@@ -1,0 +1,9 @@
+.warning-word {
+  color: var(--app-warning);
+  font-weight: 500;
+}
+
+.again-word {
+  color: var(--app-ink);
+  font-weight: 500;
+}
