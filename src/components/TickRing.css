@@ -1,0 +1,16 @@
+.tick-ring {
+  display: grid;
+  flex: none;
+  place-items: center;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  margin-inline: 8px 4px;
+  border: 2px solid var(--app-ink);
+  border-radius: 50%;
+  color: var(--app-ink);
+}
+
+.tick-ring.is-ticked {
+  background: var(--app-yellow);
+}

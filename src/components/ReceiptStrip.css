@@ -1,0 +1,56 @@
+.receipt-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receipt-thumbnails {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 2px 0 4px;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+}
+
+.receipt {
+  position: relative;
+  flex: none;
+}
+
+.receipt-open {
+  display: block;
+  border-radius: var(--app-radius-row);
+}
+
+.receipt-image {
+  display: block;
+  width: 72px;
+  height: 96px;
+  overflow: hidden;
+  border-radius: var(--app-radius-row);
+  background: var(--app-card);
+  box-shadow: var(--app-shadow-card);
+  object-fit: cover;
+}
+
+.receipt-remove {
+  position: absolute;
+  top: -6px;
+  inset-inline-end: -6px;
+  display: grid;
+  place-items: center;
+  width: var(--app-tap);
+  height: var(--app-tap);
+  color: var(--app-card);
+}
+
+.receipt-remove svg {
+  box-sizing: content-box;
+  width: 10px;
+  height: 10px;
+  padding: 5px;
+  border-radius: 50%;
+  background: var(--app-ink);
+}

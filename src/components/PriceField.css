@@ -1,0 +1,33 @@
+.price-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.price-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.price-field-hint {
+  align-self: flex-start;
+}
+
+.price-field-box {
+  position: relative;
+  display: block;
+}
+
+.price-field-box .field {
+  padding-left: 36px;
+  text-align: left;
+}
+
+.price-field-currency {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  color: var(--app-ink-soft);
+  transform: translateY(-50%);
+}

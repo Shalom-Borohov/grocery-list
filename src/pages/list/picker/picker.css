@@ -1,0 +1,65 @@
+.add-picker {
+  --background: var(--app-ground);
+  --border-radius: var(--app-radius-card);
+}
+
+.add-picker ion-header {
+  background: var(--app-ground);
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 14px var(--app-gutter) 0;
+}
+
+.picker-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 800;
+}
+
+.picker-done {
+  min-height: var(--app-tap);
+  padding: 0 20px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-yellow);
+  color: var(--app-ink);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.add-picker .search-field {
+  margin-block: 4px;
+}
+
+.picker-body {
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+
+.picker-results {
+  padding-top: 12px;
+}
+
+.picker-sets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 var(--app-gutter);
+}
+
+.picker-set {
+  flex: 1 1 40%;
+  min-height: 48px;
+  border-radius: var(--app-radius-button);
+  background: var(--app-card);
+  font-size: 1rem;
+}
+
+.picker-plus {
+  width: 36px;
+  height: 36px;
+}

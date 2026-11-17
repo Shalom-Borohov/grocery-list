@@ -1,0 +1,3 @@
+.verdict-switch .choice[aria-pressed='true'] .verdict-never {
+  color: var(--app-warning);
+}

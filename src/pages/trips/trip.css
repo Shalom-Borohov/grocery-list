@@ -1,0 +1,71 @@
+.trip-page {
+  padding-top: 4px;
+}
+
+.trip-heading .page-title {
+  padding-top: 0;
+}
+
+.trip-time {
+  margin: 2px 0 0;
+  padding: 0 var(--app-gutter);
+  text-align: start;
+}
+
+.trip-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 16px var(--app-gutter) 0;
+  padding: 14px;
+}
+
+.trip-fields .field {
+  background: var(--app-ground);
+}
+
+.trip-fields .price-field .field {
+  min-height: 56px;
+  padding-left: 30px;
+  background: transparent;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.trip-fields .price-field-currency {
+  left: 4px;
+  font-size: 1.25rem;
+}
+
+.trip-add-note {
+  align-self: flex-start;
+  background: var(--app-ground);
+}
+
+.trip-receipts .receipt-strip {
+  padding-inline: var(--app-gutter);
+}
+
+.trip-line-price {
+  flex: none;
+  font-size: 1rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.trip-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 0 var(--app-gutter);
+}
+
+.trip-actions .outline-button {
+  width: 100%;
+}
+
+.line-item-link {
+  align-self: stretch;
+}

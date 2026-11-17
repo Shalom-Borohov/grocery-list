@@ -1,0 +1,134 @@
+.list-body.has-start-button {
+  padding-bottom: calc(var(--app-tab-bar-clearance) + 78px);
+}
+
+.list-body .round-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-inline-end: var(--app-gutter);
+  margin-bottom: 14px;
+}
+
+.home-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-count {
+  margin: 2px 0 0;
+  padding: 0 var(--app-gutter);
+}
+
+.shop-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 96px;
+  padding: 12px var(--app-gutter);
+}
+
+.shop-count-tile {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--app-yellow);
+  color: var(--app-ink);
+  font-size: 2.875rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.shop-count-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.shop-count-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.shop-count-detail {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--app-ink-soft);
+  font-size: 0.875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shop-header-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.entry-sliding {
+  overflow: hidden;
+  border-radius: var(--app-radius-row);
+}
+
+.entry-item {
+  --background: transparent;
+  --border-width: 0;
+  --inner-border-width: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --min-height: var(--app-row-height);
+}
+
+.entry-item .label-row {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .entry-item .label-row.is-taken {
+    animation: entry-sink 200ms ease-out;
+  }
+}
+
+@keyframes entry-sink {
+  from {
+    opacity: 0.6;
+    transform: translateY(-12px);
+  }
+}
+
+.start-shopping {
+  inset-inline: 0;
+  bottom: 0;
+  padding: 8px var(--app-gutter) calc(12px + env(safe-area-inset-bottom));
+  background: var(--app-ground);
+}
+
+.start-shopping .primary-button {
+  width: 100%;
+}
+
+.list-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.finish-counts {
+  margin: 0;
+  padding: 0 6px;
+  font-weight: 500;
+  line-height: 1.4;
+}
