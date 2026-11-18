@@ -7,7 +7,7 @@ related_targets: ["src/pages"]
 
 ## Scope
 
-The whole app shell and its screens: רשימה (the open list and the shop view), the add picker, the item page, קניות (trip history and spending), מצרכים (items and saved sets), הגדרות. Mode: Operate. Platform: iOS Home Screen web app, Ionic iOS mode, Hebrew RTL, designed at 375×647 first (iPhone SE). Build path: code-led; the chosen sketch is `.impeccable/mocks/decision/look-labels.html`.
+The whole app shell and its screens: רשימה (the open list, ticked at home or in the shop; no shopping mode since spec 69), the add picker, the item page, קניות (trip history and spending), מצרכים (items and saved sets), הגדרות. Mode: Operate. Platform: iOS Home Screen web app, Ionic iOS mode, Hebrew RTL, designed at 375×647 first (iPhone SE). Build path: code-led; the chosen sketch is `.impeccable/mocks/decision/look-labels.html`.
 
 ## Audience and job
 
@@ -48,7 +48,7 @@ Picked by the owner on impeccable's decision page on 2026-11-17. All are in `.im
 
 ## Unresolved
 
-- רשימה at home (before "התחלת קנייה"), the finish sheet, a finished trip's page, saved-set editing and הגדרות have no sketch; they inherit this system (spec 37).
+- רשימה with nothing taken yet (the plain list header, spec 71), the finish sheet, a finished trip's page, saved-set editing and הגדרות have no sketch; they inherit this system (spec 37).
 - The main sketch's header says "סיום"; the spec's finish sheet opens from it.
 - The sketches were drawn 390 wide and 647 tall; the build is checked at 375×647 (spec 23).
 - The main sketch has no control for "לא היה"; the build puts it in a row swipe with a tap path on the row's sheet (spec 4), and no sketch shows it.

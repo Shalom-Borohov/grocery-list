@@ -5,7 +5,6 @@ import { createItem, updateItem } from '../../src/data/itemsRepo'
 import { addToList, toggleTaken } from '../../src/data/listRepo'
 import { RecordsProvider } from '../../src/data/RecordsProvider'
 import { allRecords } from '../../src/data/recordsContext'
-import { startTrip } from '../../src/data/tripsRepo'
 import { AddPicker } from '../../src/pages/list/picker/AddPicker'
 import { resetDb } from '../helpers/db'
 import { modalDismissed, toastMessages } from '../helpers/overlays'
@@ -250,7 +249,6 @@ describe('add picker', () => {
   it('leaves an item already taken in the shop on the list', async () => {
     const milkId = await createItem('חלב', CREATED_AT)
 
-    await startTrip(CREATED_AT)
     await toggleTaken(await addToList(milkId, CREATED_AT), CREATED_AT)
 
     renderPicker()

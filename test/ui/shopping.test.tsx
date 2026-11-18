@@ -4,7 +4,6 @@ import { db } from '../../src/data/db'
 import { createItem, updateItem } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
-import { startTrip } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { swipeOption } from '../helpers/ionic'
 import { amount, line, trip } from '../helpers/records'
@@ -36,12 +35,10 @@ async function shopWith(names: string[]) {
     itemIds.push(itemId)
   }
 
-  await startTrip(NOW)
-
   return itemIds
 }
 
-describe('the list in the shop', () => {
+describe('shopping from the list', () => {
   beforeEach(resetDb)
 
   it('shows how many items are left as the big number, with what is in the cart and what was missing', async () => {
@@ -73,7 +70,7 @@ describe('the list in the shop', () => {
     await shopWith(['חלב', 'ביצים', 'קפה'])
 
     renderAt('/tabs/list')
-    await screen.findByRole('heading', { name: 'נשארו 3' })
+    await screen.findByText('חלב')
 
     fireEvent.click(rowBody('חלב'))
 
@@ -86,9 +83,8 @@ describe('the list in the shop', () => {
 
     fireEvent.click(rowBody('חלב'))
 
-    await screen.findByRole('heading', { name: 'נשארו 3' })
+    await waitFor(() => expect(rowBody('חלב')).toHaveAttribute('aria-pressed', 'false'))
     expect(rowNames()).toEqual(['חלב', 'ביצים', 'קפה'])
-    expect(rowBody('חלב')).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('changes the amount and marks the item missing from the sheet the amount column opens', async () => {
@@ -145,7 +141,7 @@ describe('the list in the shop', () => {
     const [milk] = await shopWith(['חלב', 'ביצים'])
 
     renderAt('/tabs/list')
-    await screen.findByRole('heading', { name: 'נשארו 2' })
+    await screen.findByText('חלב')
     fireEvent.click(swipeOption('חלב', 'לא היה'))
 
     await waitFor(async () => expect((await entryOf(milk)).state).toBe('missing'))
@@ -163,14 +159,5 @@ describe('the list in the shop', () => {
     await screen.findByRole('heading', { name: 'נשארו 0' })
 
     expect(screen.getByText('חלב').closest('ion-item-sliding')?.querySelector('ion-item-option')).toBeNull()
-  })
-
-  it('says the list is empty and still offers finishing', async () => {
-    await startTrip(NOW)
-
-    renderAt('/tabs/list')
-
-    expect(await screen.findByText(/אין מצרכים ברשימה/)).toBeVisible()
-    expect(screen.getByRole('button', { name: 'סיום' })).toBeVisible()
   })
 })

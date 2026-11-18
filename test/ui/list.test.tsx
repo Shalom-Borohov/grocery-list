@@ -1,17 +1,17 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createItem, updateItem } from '../../src/data/itemsRepo'
-import { addToList } from '../../src/data/listRepo'
+import { addToList, toggleMissing } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
-import { swipeOption } from '../helpers/ionic'
+import { expectElementsInOrder, swipeOption } from '../helpers/ionic'
 import { modalDismissed } from '../helpers/overlays'
 import { amount } from '../helpers/records'
 import { currentPath, renderAt } from '../helpers/renderAt'
 
 const NOW = 1_700_000_000_000
 
-describe('the list at home', () => {
+describe('the list', () => {
   beforeEach(resetDb)
 
   it('shows each entry as a label with its amount, name and note, and counts them', async () => {
@@ -32,15 +32,41 @@ describe('the list at home', () => {
     expect(screen.getByText('2 מצרכים')).toBeVisible()
   })
 
-  it('starts shopping from the yellow button, which turns the list into the shop view', async () => {
-    await addToList(await createItem('חלב', NOW), NOW)
+  it('shows a quiet "1" in the amount column of a plain amount, so the way into the sheet is never blank', async () => {
+    await addToList(await createItem('ביצים', NOW), NOW)
 
     renderAt('/tabs/list')
-    fireEvent.click(await screen.findByRole('button', { name: 'התחלת קנייה' }))
+
+    const column = await screen.findByRole('button', { name: 'כמות ומחיר: ביצים' })
+
+    expect(column).toHaveTextContent(/^1$/)
+    expect(column.querySelector('.amount-numeral')).toHaveClass('is-quiet')
+  })
+
+  it('ticks an entry with one tap, with no start step, and shows the shop header only while anything is ticked', async () => {
+    await addToList(await createItem('חלב', NOW), NOW)
+    await addToList(await createItem('ביצים', NOW), NOW + 1)
+
+    renderAt('/tabs/list')
+
+    const milkRow = await screen.findByRole('button', { name: 'חלב' })
+
+    expect(milkRow).toHaveAttribute('aria-pressed', 'false')
+    expect(milkRow.querySelector('.tick-ring')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'התחלת קנייה' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'סיום' })).not.toBeInTheDocument()
+
+    fireEvent.click(milkRow)
 
     expect(await screen.findByRole('heading', { name: 'נשארו 1' })).toBeInTheDocument()
-    expect((await allRecords()).activeTrip).toBeDefined()
-    expect(screen.queryByRole('button', { name: 'התחלת קנייה' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'חלב' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'סיום' })).toBeVisible()
+
+    fireEvent.click(screen.getByRole('button', { name: 'חלב' }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'רשימה' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'חלב' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.queryByRole('button', { name: 'סיום' })).not.toBeInTheDocument()
   })
 
   it('removes an entry from its swipe option', async () => {
@@ -55,14 +81,27 @@ describe('the list at home', () => {
     expect(screen.getByText('ביצים')).toBeVisible()
   })
 
-  it('opens the row sheet from the row, and removes the entry from there', async () => {
+  it('swipes a waiting entry to "לא היה" or "הסרה", and a missing one to "היה בכל זאת" or "הסרה", with "הסרה" outermost', async () => {
+    await addToList(await createItem('חלב', NOW), NOW)
+    await toggleMissing(await addToList(await createItem('ביצים', NOW), NOW + 1))
+
+    renderAt('/tabs/list')
+    await screen.findByText('חלב')
+
+    expectElementsInOrder([swipeOption('חלב', 'לא היה'), swipeOption('חלב', 'הסרה')])
+    expectElementsInOrder([swipeOption('ביצים', 'היה בכל זאת'), swipeOption('ביצים', 'הסרה')])
+    expect(swipeOption('חלב', 'לא היה').getAttribute('color')).not.toBe(swipeOption('חלב', 'הסרה').getAttribute('color'))
+    expect(() => swipeOption('ביצים', 'לא היה')).toThrow()
+  })
+
+  it('opens the row sheet from the amount column, with "לא היה", and removes the entry from there', async () => {
     await addToList(await createItem('חלב', NOW), NOW)
 
     renderAt('/tabs/list')
-    fireEvent.click(await screen.findByRole('button', { name: 'חלב' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'כמות ומחיר: חלב' }))
 
     expect(await screen.findByRole('button', { name: 'הסרה מהרשימה' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'לא היה' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'לא היה' })).toBeInTheDocument()
 
     const dismissed = modalDismissed()
 
@@ -85,11 +124,11 @@ describe('the list at home', () => {
     await waitFor(() => expect(currentPath()).toBe(`/tabs/list/item/${milk}`))
   })
 
-  it('says the list is empty and offers adding but not shopping', async () => {
+  it('says the list is empty and offers adding, with no "סיום"', async () => {
     renderAt('/tabs/list')
 
     expect(await screen.findByText(/הרשימה ריקה/)).toBeVisible()
     expect(screen.getByRole('button', { name: 'הוספה' })).toBeVisible()
-    expect(screen.queryByRole('button', { name: 'התחלת קנייה' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'סיום' })).not.toBeInTheDocument()
   })
 })

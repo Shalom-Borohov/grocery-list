@@ -1,5 +1,5 @@
 import { type ReactNode, useId } from 'react'
-import { amountParts, amountText } from '../copy/amountCopy'
+import { amountParts, amountText, quantityText } from '../copy/amountCopy'
 import { joinParts } from '../copy/joinParts'
 import type { Amount } from '../domain/types'
 import { ItemThumbnail } from './ItemThumbnail'
@@ -45,17 +45,26 @@ export function AmountColumn({ numeral, unitLabel, size }: AmountColumnProps) {
   )
 }
 
-function AmountColumnOf({ amount }: { amount: Amount }) {
+type AmountColumnOfProps = {
+  amount: Amount
+  showsPlainAmount: boolean
+}
+
+function AmountColumnOf({ amount, showsPlainAmount }: AmountColumnOfProps) {
   const parts = amountParts(amount)
 
-  return parts && <AmountColumn numeral={parts.numeral} unitLabel={parts.unitLabel} size="row" />
+  if (!parts) {
+    return showsPlainAmount && <span className="amount-numeral num is-quiet">{quantityText(amount.quantity)}</span>
+  }
+
+  return <AmountColumn numeral={parts.numeral} unitLabel={parts.unitLabel} size="row" />
 }
 
 export function LabelRow(props: LabelRowProps) {
   const { name, secondary, amount, column, photoId, isTaken, trailing, pressed, onTap, onColumnTap } = props
   const nameId = useId()
   const secondaryId = useId()
-  const columnContent = column ?? (amount && <AmountColumnOf amount={amount} />)
+  const columnContent = column ?? (amount && <AmountColumnOf amount={amount} showsPlainAmount={onColumnTap !== undefined} />)
   const columnLabel = joinParts([props.columnLabel, amount && amountText(amount)])
 
   const body = (

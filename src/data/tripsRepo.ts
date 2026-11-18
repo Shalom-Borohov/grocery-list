@@ -1,6 +1,6 @@
 import { parse } from 'valibot'
 import { finishTrip } from '../domain/finishTrip'
-import { ACTIVE_TRIP_KEY, type ShrunkPhoto, type Trip, type TripLine, tripSchema } from '../domain/types'
+import { type ShrunkPhoto, type Trip, type TripLine, tripSchema } from '../domain/types'
 import { db } from './db'
 import { existing } from './errors'
 import { deletePhotos, photoTables, storePhoto } from './photosRepo'
@@ -11,32 +11,20 @@ export type TripChanges = Partial<Pick<Trip, 'total' | 'note'>>
 
 type LineChanges = Partial<Pick<TripLine, 'price'>>
 
-const tripTables = () => [db.items, db.listEntries, db.trips, db.settings, ...photoTables()]
+const tripTables = () => [db.items, db.listEntries, db.trips, ...photoTables()]
 
 const existingTrip = async (tripId: string) => existing(await db.trips.get(tripId), 'trip', tripId)
 
 const putTrip = (trip: Trip) => db.trips.put(parse(tripSchema, trip))
 
-export const startTrip = (now: number) =>
-  db.transaction('rw', db.settings, async () => {
-    if (!(await db.settings.get(ACTIVE_TRIP_KEY))) {
-      await db.settings.put({ key: ACTIVE_TRIP_KEY, startedAt: now })
-    }
-  })
-
 export const finishShopping = ({ total, note, receipts }: FinishDetails, now: number) =>
   db.transaction('rw', tripTables(), async () => {
-    const [entries, items, activeTrip] = await Promise.all([
-      db.listEntries.toArray(),
-      db.items.toArray(),
-      db.settings.get(ACTIVE_TRIP_KEY),
-    ])
+    const [entries, items] = await Promise.all([db.listEntries.toArray(), db.items.toArray()])
 
     const finished = finishTrip({
       entries,
       items,
       tripId: crypto.randomUUID(),
-      startedAt: activeTrip?.startedAt ?? now,
       finishedAt: now,
       details: { total, note },
     })
@@ -51,8 +39,6 @@ export const finishShopping = ({ total, note, receipts }: FinishDetails, now: nu
         finished.usualAmounts.map(({ itemId, amount }) => ({ key: itemId, changes: { usualAmount: amount } })),
       )
     }
-
-    await db.settings.delete(ACTIVE_TRIP_KEY)
 
     return finished.trip?.id
   })
@@ -97,5 +83,3 @@ export const deleteTrip = (tripId: string) =>
     await db.trips.delete(tripId)
     await deletePhotos(trip.receiptPhotoIds)
   })
-
-export const cancelShopping = () => db.settings.delete(ACTIVE_TRIP_KEY)

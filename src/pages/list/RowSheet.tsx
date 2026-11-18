@@ -14,13 +14,12 @@ import type { ListRow } from './listRows'
 type RowSheetProps = {
   row: ListRow | undefined
   trips: Trip[]
-  isShopping: boolean
   onClose: () => void
 }
 
 type RowSheetContentProps = Omit<RowSheetProps, 'row'> & { row: ListRow }
 
-function RowSheetContent({ row: { entry, item }, trips, isShopping, onClose }: RowSheetContentProps) {
+function RowSheetContent({ row: { entry, item }, trips, onClose }: RowSheetContentProps) {
   const router = useIonRouter()
   const run = useAction()
 
@@ -46,11 +45,9 @@ function RowSheetContent({ row: { entry, item }, trips, isShopping, onClose }: R
             onChange={(price) => run(() => updateEntry(entry.id, { price }))}
           />
           <div className="list-sheet-actions">
-            {isShopping && (
-              <button type="button" className="quiet-button" onClick={() => run(() => toggleMissing(entry.id))}>
-                {entry.state === 'missing' ? LIST_COPY.wasThere : COMMON_COPY.missing}
-              </button>
-            )}
+            <button type="button" className="quiet-button" onClick={() => run(() => toggleMissing(entry.id))}>
+              {LIST_COPY.missingToggle(entry.state === 'missing')}
+            </button>
             <button type="button" className="quiet-button" onClick={goToItem}>
               {COMMON_COPY.itemPage}
             </button>

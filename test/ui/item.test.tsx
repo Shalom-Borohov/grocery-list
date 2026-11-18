@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem, setItemPhoto } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
-import { finishShopping, startTrip } from '../../src/data/tripsRepo'
+import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { amount, CREATED_AT } from '../helpers/records'
 import { ionElement } from '../helpers/ionic'
@@ -34,8 +34,6 @@ const NOVEMBER_12 = new Date(2026, 10, 12, 18).getTime()
 type Outcome = { price?: number; isMissing?: boolean }
 
 async function shop(itemId: string, finishedAt: number, { price, isMissing }: Outcome = {}) {
-  await startTrip(finishedAt)
-
   const entryId = await addToList(itemId, finishedAt)
 
   if (price !== undefined) {

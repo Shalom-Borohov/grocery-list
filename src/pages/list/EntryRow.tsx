@@ -4,7 +4,6 @@ import { LabelRow } from '../../components/LabelRow'
 import { SecondaryText } from '../../components/SecondaryText'
 import { TickRing } from '../../components/TickRing'
 import { useAction } from '../../components/useAction'
-import { COMMON_COPY } from '../../copy/common'
 import { removeEntry, toggleMissing, toggleTaken } from '../../data/listRepo'
 import { secondaryLine } from '../../domain/secondaryLine'
 import type { ListEntry } from '../../domain/types'
@@ -13,32 +12,32 @@ import type { ListRow } from './listRows'
 
 type EntryRowProps = {
   row: ListRow
-  isShopping: boolean
   onOpenSheet: () => void
 }
 
 type SwipeAction = { label: string; color: string; act: () => Promise<unknown> }
 
-function swipeActionFor(entry: ListEntry, isShopping: boolean): SwipeAction | undefined {
-  if (!isShopping) {
-    return { label: LIST_COPY.remove, color: 'danger', act: () => removeEntry(entry.id) }
-  }
-
+function swipeActionsFor(entry: ListEntry): SwipeAction[] {
   if (entry.state === 'taken') {
-    return undefined
+    return []
   }
 
-  return entry.state === 'missing'
-    ? { label: LIST_COPY.wasThere, color: 'medium', act: () => toggleMissing(entry.id) }
-    : { label: COMMON_COPY.missing, color: 'danger', act: () => toggleMissing(entry.id) }
+  const missingToggle: SwipeAction = {
+    label: LIST_COPY.missingToggle(entry.state === 'missing'),
+    color: 'medium',
+    act: () => toggleMissing(entry.id),
+  }
+
+  return [missingToggle, { label: LIST_COPY.remove, color: 'danger', act: () => removeEntry(entry.id) }]
 }
 
-export function EntryRow({ row: { entry, item }, isShopping, onOpenSheet }: EntryRowProps) {
+export function EntryRow({ row: { entry, item }, onOpenSheet }: EntryRowProps) {
   const sliding = useRef<HTMLIonItemSlidingElement>(null)
   const run = useAction()
   const line = secondaryLine(item, entry)
-  const isTaken = isShopping && entry.state === 'taken'
-  const swipeAction = swipeActionFor(entry, isShopping)
+  const isTaken = entry.state === 'taken'
+  const swipeActions = swipeActionsFor(entry)
+  const canSwipe = swipeActions.length > 0
 
   function swipe(action: SwipeAction) {
     void sliding.current?.close()
@@ -46,7 +45,7 @@ export function EntryRow({ row: { entry, item }, isShopping, onOpenSheet }: Entr
   }
 
   return (
-    <IonItemSliding ref={sliding} className="entry-sliding" disabled={!swipeAction}>
+    <IonItemSliding ref={sliding} className="entry-sliding" disabled={!canSwipe}>
       <IonItem lines="none" className="entry-item">
         <LabelRow
           name={item.name}
@@ -54,18 +53,20 @@ export function EntryRow({ row: { entry, item }, isShopping, onOpenSheet }: Entr
           secondary={line && <SecondaryText line={line} />}
           photoId={item.photoId}
           isTaken={isTaken}
-          trailing={isShopping && <TickRing isTicked={isTaken} />}
-          pressed={isShopping ? isTaken : undefined}
+          trailing={<TickRing isTicked={isTaken} />}
+          pressed={isTaken}
           columnLabel={LIST_COPY.rowDetails(item.name)}
           onColumnTap={onOpenSheet}
-          onTap={isShopping ? () => run(() => toggleTaken(entry.id, Date.now())) : onOpenSheet}
+          onTap={() => run(() => toggleTaken(entry.id, Date.now()))}
         />
       </IonItem>
-      {swipeAction && (
+      {canSwipe && (
         <IonItemOptions side="end">
-          <IonItemOption color={swipeAction.color} onClick={() => swipe(swipeAction)}>
-            {swipeAction.label}
-          </IonItemOption>
+          {swipeActions.map((action) => (
+            <IonItemOption key={action.label} color={action.color} onClick={() => swipe(action)}>
+              {action.label}
+            </IonItemOption>
+          ))}
         </IonItemOptions>
       )}
     </IonItemSliding>

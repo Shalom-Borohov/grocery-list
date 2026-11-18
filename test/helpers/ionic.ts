@@ -47,10 +47,12 @@ export function swipeOption(name: string, text: string) {
   return option
 }
 
-export async function expectInOrder(texts: string[]) {
-  const elements = await Promise.all(texts.map((text) => screen.findByText(text)))
-
+export function expectElementsInOrder(elements: Element[]) {
   elements.slice(1).forEach((element, index) => {
     expect(elements[index].compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
+}
+
+export async function expectInOrder(texts: string[]) {
+  expectElementsInOrder(await Promise.all(texts.map((text) => screen.findByText(text))))
 }

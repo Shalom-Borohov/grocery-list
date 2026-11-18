@@ -1,6 +1,7 @@
 import { COMMON_COPY } from '../../copy/common'
 import { clockTime, shortDate, weekdayName } from '../../copy/formats'
 import { joinParts } from '../../copy/joinParts'
+import { dayDateOf } from '../../domain/dayDate'
 import type { Period } from '../../domain/spending'
 
 const TIME_SPAN_DASH = '–'
@@ -19,7 +20,17 @@ export const TRIPS_COPY = {
   missingCount: (count: number) => `${COMMON_COPY.missing} ${count}`,
   empty: 'קניות שהסתיימו יופיעו כאן.',
   tripDate: (time: number) => `${weekdayName(time)} ${shortDate(time)}`,
-  timeSpan: (startedAt: number, finishedAt: number) => `${clockTime(startedAt)}${TIME_SPAN_DASH}${clockTime(finishedAt)}`,
+  timeSpan: (startedAt: number, finishedAt: number) => {
+    const isSameDay = dayDateOf(startedAt) === dayDateOf(finishedAt)
+
+    if (isSameDay && clockTime(startedAt) === clockTime(finishedAt)) {
+      return clockTime(finishedAt)
+    }
+
+    const span = `${clockTime(startedAt)}${TIME_SPAN_DASH}${clockTime(finishedAt)}`
+
+    return isSameDay ? span : `${TRIPS_COPY.tripDate(startedAt)} ${span}`
+  },
   notFound: 'הקנייה לא נמצאה',
   receipts: 'קבלות',
   deleteReceipt: (position: number) => `מחיקת קבלה ${position}`,

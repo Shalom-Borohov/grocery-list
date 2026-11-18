@@ -24,6 +24,11 @@
   line-height: 1;
 }
 
+.amount-numeral.is-quiet {
+  color: var(--app-ink-soft);
+  font-weight: 500;
+}
+
 .amount-numeral.is-large {
   font-size: 2.75rem;
 }

@@ -7,16 +7,20 @@ import { storedPhotoBytes } from '../../src/data/photosRepo'
 import { cachedPhotoUrl, storedPhotoUrl } from '../../src/data/photoUrls'
 import { allRecords } from '../../src/data/recordsContext'
 import { seedSet } from '../helpers/seed'
-import { finishShopping, startTrip } from '../../src/data/tripsRepo'
+import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { shrunkPhoto, stubObjectUrls } from '../helpers/photo'
-import { amount } from '../helpers/records'
+import { amount, item } from '../helpers/records'
 
 const NOW = new Date(2026, 10, 17, 10, 0).getTime()
 
 const ITEM_PHOTO = shrunkPhoto(new Uint8Array([255, 216, 1]).buffer, new Uint8Array([255, 216, 2]).buffer)
 
 const RECEIPT = shrunkPhoto(new Uint8Array([255, 216, 3]).buffer, new Uint8Array([255, 216, 4]).buffer)
+
+const DATA_FILE = 'data.json'
+
+const archiveOf = (data: object) => zipSync({ [DATA_FILE]: strToU8(JSON.stringify(data)) })
 
 const exportedArchive = async () => new Uint8Array(await new Blob(await exportBackup(NOW)).arrayBuffer())
 
@@ -26,12 +30,10 @@ async function seed() {
 
   await updateItem(tomatoes, { note: 'רק מהאריזה הסגורה', verdict: 'again' })
   await setItemPhoto(tomatoes, ITEM_PHOTO)
-  await startTrip(NOW)
   await toggleTaken(await addToList(tomatoes, NOW, amount(2)), NOW)
   await finishShopping({ total: 9.9, receipts: [RECEIPT] }, NOW + 1)
-  await addToList(milk, NOW + 2)
+  await toggleTaken(await addToList(milk, NOW + 2), NOW + 3)
   await seedSet('בסיס', [tomatoes, milk], NOW)
-  await startTrip(NOW + 3)
 }
 
 async function snapshotWithPhotos() {
@@ -53,7 +55,7 @@ describe('backup', () => {
   beforeEach(resetDb)
   stubObjectUrls()
 
-  it('survives a round trip through a zip: items, the list, trips, sets, shopping mode and every photo', async () => {
+  it('survives a round trip through a zip: items, the list, trips, sets and every photo', async () => {
     await seed()
     const before = await snapshotWithPhotos()
     const archive = await exportedArchive()
@@ -62,6 +64,24 @@ describe('backup', () => {
     await restoreBackup(parseBackup(archive))
 
     expect(await snapshotWithPhotos()).toEqual(before)
+  })
+
+  it('restores a backup made while the app still had shopping mode', async () => {
+    const milk = item({ id: 'milk', name: 'חלב' })
+
+    const shoppingModeBackup = {
+      version: 1,
+      exportedAt: NOW,
+      items: [milk],
+      listEntries: [],
+      trips: [],
+      sets: [],
+      activeTrip: { key: 'activeTrip', startedAt: NOW },
+    }
+
+    await restoreBackup(parseBackup(archiveOf(shoppingModeBackup)))
+
+    expect((await allRecords()).items).toEqual([milk])
   })
 
   it('replaces what is on the phone', async () => {
@@ -90,7 +110,7 @@ describe('backup', () => {
   it('rejects a file that is not a backup, leaving the phone untouched', async () => {
     await createItem('חלב', NOW)
 
-    const notBackup = zipSync({ 'data.json': strToU8(JSON.stringify({ version: 1, items: 'oops' })) })
+    const notBackup = archiveOf({ version: 1, items: 'oops' })
 
     expect(() => parseBackup(notBackup)).toThrow()
     expect(() => parseBackup(new Uint8Array([1, 2, 3]))).toThrow()

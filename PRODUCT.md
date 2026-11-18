@@ -32,7 +32,7 @@ A private grocery list that learns from the owner's own trips. Notes apps and li
 
 ## Capabilities and Constraints
 
-- One open list; saved sets of items can be poured into it. The trip is that list in shopping mode.
+- One open list; saved sets of items can be poured into it. Items are ticked straight on the list, and finishing files the trip.
 - In the shop an item is waiting, taken or "לא היה" (the shop didn't have it). What wasn't taken stays on the list for next time.
 - An item keeps a name, a note, one photo, a usual quantity, an optional verdict ("לקנות שוב" / "לא לקנות שוב") and the prices the owner chose to record.
 - The lessons the owner asked for: whether an item was good or bad, and how much to buy.

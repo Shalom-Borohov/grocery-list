@@ -4,7 +4,6 @@ import {
   check,
   type InferOutput,
   is,
-  literal,
   maxValue,
   minLength,
   minValue,
@@ -38,8 +37,6 @@ const ENTRY_STATES = ['waiting', 'taken', 'missing'] as const
 export type EntryState = (typeof ENTRY_STATES)[number]
 
 const TRIP_LINE_STATES = ['taken', 'missing'] as const
-
-export const ACTIVE_TRIP_KEY = 'activeTrip'
 
 const nameSchema = pipe(string(), trim(), minLength(MINIMUM_NAME_LENGTH))
 
@@ -125,19 +122,11 @@ export const savedSetSchema = object({
 
 export type SavedSet = InferOutput<typeof savedSetSchema>
 
-export const activeTripSchema = object({
-  key: literal(ACTIVE_TRIP_KEY),
-  startedAt: number(),
-})
-
-export type ActiveTrip = InferOutput<typeof activeTripSchema>
-
 export type Records = {
   items: Item[]
   entries: ListEntry[]
   trips: Trip[]
   sets: SavedSet[]
-  activeTrip: ActiveTrip | undefined
 }
 
 export type StoredPhoto = {

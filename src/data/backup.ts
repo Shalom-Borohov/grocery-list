@@ -1,13 +1,6 @@
 import { strFromU8, strToU8, unzipSync, Zip, ZipDeflate, ZipPassThrough } from 'fflate'
-import { array, type InferOutput, literal, number, object, optional, parse, parseJson, pipe, string } from 'valibot'
-import {
-  activeTripSchema,
-  itemSchema,
-  listEntrySchema,
-  savedSetSchema,
-  type StoredPhoto,
-  tripSchema,
-} from '../domain/types'
+import { array, type InferOutput, literal, number, object, parse, parseJson, pipe, string } from 'valibot'
+import { itemSchema, listEntrySchema, savedSetSchema, type StoredPhoto, tripSchema } from '../domain/types'
 import { allTables, db } from './db'
 import { revokePhotoUrls } from './photoUrls'
 
@@ -37,7 +30,6 @@ const backupFileSchema = pipe(
     listEntries: array(listEntrySchema),
     trips: array(tripSchema),
     sets: array(savedSetSchema),
-    activeTrip: optional(activeTripSchema),
   }),
 )
 
@@ -93,7 +85,6 @@ export const exportBackup = (now: number) =>
       listEntries: await db.listEntries.toArray(),
       trips: await db.trips.toArray(),
       sets: await db.sets.toArray(),
-      activeTrip: (await db.settings.toArray())[0],
     }
 
     writer.addDeflated(DATA_FILE, strToU8(JSON.stringify(backupFile)))
@@ -148,8 +139,4 @@ export const restoreBackup = (backup: ParsedBackup) =>
     await db.sets.bulkAdd(backup.sets)
     await db.photos.bulkAdd(backup.photos)
     await db.thumbnails.bulkAdd(backup.thumbnails)
-
-    if (backup.activeTrip) {
-      await db.settings.add(backup.activeTrip)
-    }
   })

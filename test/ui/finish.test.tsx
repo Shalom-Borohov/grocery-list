@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
-import { startTrip } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { modalDismissed, toastMessages } from '../helpers/overlays'
 import { cameraPhoto, PHOTO_URL, stubObjectUrls } from '../helpers/photo'
@@ -24,7 +23,6 @@ async function shopTakingMilkWithoutCoffee() {
   await addToList(await createItem('ביצים', NOW), NOW)
   await toggleTaken(await addToList(milk, NOW + 1), NOW)
   await toggleMissing(await addToList(coffee, NOW + 2))
-  await startTrip(NOW)
 }
 
 async function openFinishSheet() {
@@ -56,7 +54,7 @@ describe('finishing a trip', () => {
     expect(screen.getByRole('button', { name: 'שמירה' })).toBeEnabled()
   })
 
-  it('files the trip with its total, receipt and note, and leaves shopping mode', async () => {
+  it('files the trip with its total, receipt and note, and the list goes back to its plain header', async () => {
     await shopTakingMilkWithoutCoffee()
     await openFinishSheet()
 
@@ -72,9 +70,10 @@ describe('finishing a trip', () => {
     fireEvent.click(screen.getByRole('button', { name: 'שמירה' }))
     await dismissed
 
-    const { trips, activeTrip } = await allRecords()
+    const { trips, entries } = await allRecords()
 
-    expect(activeTrip).toBeUndefined()
+    expect(entries).toHaveLength(2)
+    expect(entries.every(({ state }) => state === 'waiting')).toBe(true)
     expect(trips).toHaveLength(1)
     expect(trips[0]).toMatchObject({ total: 84.5, note: 'תור ארוך בקופה' })
     expect(trips[0].receiptPhotoIds).toHaveLength(1)
@@ -83,7 +82,10 @@ describe('finishing a trip', () => {
       ['קפה', 'missing'],
     ])
     await waitFor(() => expect(toastMessages()).toContain('הקנייה נשמרה'))
-    expect(await screen.findByRole('button', { name: 'התחלת קנייה' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'רשימה' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'סיום' })).not.toBeInTheDocument()
+    expect(screen.queryByText('חלב')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'קפה' })).toHaveAccessibleDescription('לא היה בפעם שעברה')
   })
 
   it('saves with one tap and nothing filled in', async () => {
@@ -109,22 +111,5 @@ describe('finishing a trip', () => {
 
     await waitFor(async () => expect((await allRecords()).trips).toHaveLength(1))
     expect((await allRecords()).trips[0].receiptPhotoIds).toEqual([])
-  })
-
-  it('with nothing taken and nothing missing, only leaves shopping mode', async () => {
-    await addToList(await createItem('חלב', NOW), NOW)
-    await startTrip(NOW)
-    await openFinishSheet()
-
-    expect(screen.getByText(/לא תישמר קנייה/)).toBeVisible()
-    expect(screen.queryByRole('textbox', { name: 'סכום' })).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('צילום קבלה')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'שמירה' })).not.toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('button', { name: 'יציאה ממצב קנייה' }))
-
-    await waitFor(async () => expect((await allRecords()).activeTrip).toBeUndefined())
-    expect((await allRecords()).trips).toEqual([])
-    expect((await allRecords()).entries).toHaveLength(1)
   })
 })
