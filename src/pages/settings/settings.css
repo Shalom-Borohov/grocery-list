@@ -6,10 +6,17 @@
 }
 
 .settings-tile {
+  --settings-tile-gap: 10px;
+
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--settings-tile-gap);
   padding: 16px;
+}
+
+.settings-action + .settings-action,
+.settings-ready + .settings-action {
+  margin-top: calc(var(--app-stack-gap) - var(--settings-tile-gap));
 }
 
 .settings-tile h2 {
@@ -39,7 +46,7 @@
 .settings-ready {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--app-stack-gap);
   color: var(--app-ink-soft);
   font-size: 0.875rem;
   text-align: center;

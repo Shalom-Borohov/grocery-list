@@ -1,7 +1,7 @@
 .choice-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--app-stack-gap) var(--app-row-gap);
 }
 
 .choice {
