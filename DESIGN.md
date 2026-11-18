@@ -260,7 +260,7 @@ The shelf label. A white 14px card, min 60px, with a fixed amount column (numera
 72px yellow square at 18px radius holding the items-left display numeral, with the "נשארו" headline and one soft-ink detail line beside it. The yellow spending block on קניות is its wider sibling (20px radius, 16px padding, total at 2.75rem/800, the period named above it as data).
 
 ### Buttons
-- **Primary:** sale yellow, ink text 1rem/500, 16px radius, 50px tall, 22px side padding; full-width in footers ("התחלת קנייה", "להוסיף לרשימה").
+- **Primary:** sale yellow, ink text 1rem/500, 16px radius, 50px tall, 22px side padding; full-width in footers ("להוסיף לרשימה").
 - **Outline:** 2px ink stroke pill, 44px, for a secondary action next to the primary one ("סיום").
 - **Quiet:** white 14px block, 44px, for neutral actions on the grey ground.
 - **Round:** 44px ink circle with a white solid plus; the add button.

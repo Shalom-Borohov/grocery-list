@@ -64,6 +64,22 @@ describe('a trip', () => {
     expect(screen.getByText('לא היה')).toHaveClass('warning-word')
   })
 
+  it('names the start day when the first tick was on an earlier day', async () => {
+    await seedTrip({ startedAt: new Date(2026, NOVEMBER, 8, 21, 5).getTime() })
+
+    renderAt(`/tabs/trips/${TRIP_ID}`)
+
+    expect(await screen.findByText('יום א׳ 8.11.26 21:05–19:05')).toBeInTheDocument()
+  })
+
+  it('shows one time when the trip started and finished in the same minute', async () => {
+    await seedTrip({ startedAt: FINISHED, finishedAt: FINISHED + 30_000 })
+
+    renderAt(`/tabs/trips/${TRIP_ID}`)
+
+    expect(await screen.findByText('19:05')).toBeInTheDocument()
+  })
+
   it('saves the total and the note as they are typed, without leaving the field', async () => {
     await seedTrip({ total: 400, note: 'קופה 3' })
 

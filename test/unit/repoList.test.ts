@@ -9,7 +9,7 @@ import {
   toggleTaken,
   updateEntry,
 } from '../../src/data/listRepo'
-import { finishShopping, startTrip } from '../../src/data/tripsRepo'
+import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { amount } from '../helpers/records'
 
@@ -82,10 +82,8 @@ describe('pointing a row at another item', () => {
     const milk = await createItem('חלב', NOW)
     const entryId = await addToList(milk, NOW)
 
-    await startTrip(NOW)
     await toggleMissing(entryId)
     await finishShopping({ receipts: [] }, NOW + 1)
-    await startTrip(NOW + 2)
     await updateEntry(entryId, { amount: amount(2, 'liter'), price: 7.5 })
     await toggleTaken(entryId, NOW + 3)
 

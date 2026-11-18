@@ -2,7 +2,6 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem, setItemPhoto } from '../../src/data/itemsRepo'
 import { addToList, toggleTaken } from '../../src/data/listRepo'
-import { startTrip } from '../../src/data/tripsRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
 import {
@@ -142,7 +141,6 @@ describe('the row sheet in the shop', () => {
   it('puts a new item on a taken row, and the row stays taken', async () => {
     const entryId = await addToList(await createItem('חלב', NOW), NOW)
 
-    await startTrip(NOW)
     await toggleTaken(entryId, NOW + 1)
     await openRowSheet('חלב')
 

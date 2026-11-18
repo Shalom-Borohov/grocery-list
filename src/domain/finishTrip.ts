@@ -9,7 +9,6 @@ type FinishInput = {
   entries: ListEntry[]
   items: Item[]
   tripId: string
-  startedAt: number
   finishedAt: number
   details: TripDetails
 }
@@ -39,7 +38,10 @@ const keptEntry = (entry: ListEntry): ListEntry => {
   return entry.state === 'missing' ? { ...kept, state: 'waiting', missedLastTrip: true } : kept
 }
 
-export function finishTrip({ entries, items, tripId, startedAt, finishedAt, details }: FinishInput): FinishedTrip {
+const firstTickAt = (taken: ListEntry[], finishedAt: number) =>
+  Math.min(finishedAt, ...taken.map(({ takenAt }) => takenAt ?? finishedAt))
+
+export function finishTrip({ entries, items, tripId, finishedAt, details }: FinishInput): FinishedTrip {
   if (!filesATrip(entries)) {
     return { trip: undefined, keptEntries: entries, removedEntryIds: [], usualAmounts: [] }
   }
@@ -55,7 +57,7 @@ export function finishTrip({ entries, items, tripId, startedAt, finishedAt, deta
   })
 
   return {
-    trip: { id: tripId, startedAt, finishedAt, ...details, lines },
+    trip: { id: tripId, startedAt: firstTickAt(taken, finishedAt), finishedAt, ...details, lines },
     keptEntries: entries.filter(({ state }) => state !== 'taken').map(keptEntry),
     removedEntryIds: taken.map(({ id }) => id),
     usualAmounts: taken.map(({ itemId, amount }) => ({ itemId, amount })),

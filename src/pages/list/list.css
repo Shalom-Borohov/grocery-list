@@ -1,7 +1,3 @@
-.list-body.has-start-button {
-  padding-bottom: calc(var(--app-tab-bar-clearance) + 78px);
-}
-
 .list-body .round-button svg {
   width: 16px;
   height: 16px;
@@ -107,17 +103,6 @@
     opacity: 0.6;
     transform: translateY(-12px);
   }
-}
-
-.start-shopping {
-  inset-inline: 0;
-  bottom: 0;
-  padding: 8px var(--app-gutter) calc(12px + env(safe-area-inset-bottom));
-  background: var(--app-ground);
-}
-
-.start-shopping .primary-button {
-  width: 100%;
 }
 
 .list-sheet-actions {

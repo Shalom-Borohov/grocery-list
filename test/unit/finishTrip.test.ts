@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { filesATrip, finishTrip } from '../../src/domain/finishTrip'
 import { amount, entry, item } from '../helpers/records'
 
-const STARTED_AT = 1_000
+const FIRST_TICK_AT = 1_000
 
 const FINISHED_AT = 2_000
 
@@ -17,7 +17,6 @@ const finish = (entries: Parameters<typeof finishTrip>[0]['entries']) =>
     entries,
     items,
     tripId: 'trip',
-    startedAt: STARTED_AT,
     finishedAt: FINISHED_AT,
     details: { total: 412.3, note: 'עמוס' },
   })
@@ -25,14 +24,14 @@ const finish = (entries: Parameters<typeof finishTrip>[0]['entries']) =>
 describe('finishing a trip', () => {
   it('files what was taken and what the shop did not have, with the details from the finish sheet', () => {
     const { trip } = finish([
-      entry({ id: 'one', itemId: 'milk', state: 'taken', amount: amount(2, 'liter'), price: 6.9 }),
+      entry({ id: 'one', itemId: 'milk', state: 'taken', amount: amount(2, 'liter'), price: 6.9, takenAt: FIRST_TICK_AT }),
       entry({ id: 'two', itemId: 'tahini', state: 'missing' }),
       entry({ id: 'three', itemId: 'coffee' }),
     ])
 
     expect(trip).toEqual({
       id: 'trip',
-      startedAt: STARTED_AT,
+      startedAt: FIRST_TICK_AT,
       finishedAt: FINISHED_AT,
       total: 412.3,
       note: 'עמוס',
@@ -51,6 +50,22 @@ describe('finishing a trip', () => {
     ])
 
     expect(trip?.lines.map(({ itemId }) => itemId)).toEqual(['milk', 'coffee', 'tahini'])
+  })
+
+  it('starts the trip at the first tick, whatever order the items were taken in', () => {
+    const { trip } = finish([
+      entry({ id: 'one', itemId: 'milk', state: 'taken', takenAt: FIRST_TICK_AT + 300 }),
+      entry({ id: 'two', itemId: 'coffee', state: 'taken', takenAt: FIRST_TICK_AT }),
+      entry({ id: 'three', itemId: 'tahini', state: 'missing' }),
+    ])
+
+    expect(trip?.startedAt).toBe(FIRST_TICK_AT)
+  })
+
+  it('starts a trip with only items the shop did not have when it finishes', () => {
+    const { trip } = finish([entry({ id: 'one', itemId: 'tahini', state: 'missing' })])
+
+    expect(trip?.startedAt).toBe(FINISHED_AT)
   })
 
   it('takes taken items off the list and keeps the rest, marking what the shop did not have', () => {

@@ -5,7 +5,7 @@ import { storedPhotoBytes } from '../../src/data/photosRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { createSetFromEntries, deleteSet, pourSet, updateSet } from '../../src/data/setsRepo'
 import { seedSet } from '../helpers/seed'
-import { finishShopping, startTrip } from '../../src/data/tripsRepo'
+import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { shrunkPhoto } from '../helpers/photo'
 import { amount } from '../helpers/records'
@@ -59,7 +59,6 @@ describe('deleting an item', () => {
     await setItemPhoto(milk, PHOTO)
     const { photoId } = (await allRecords()).items.find(({ id }) => id === milk) ?? {}
 
-    await startTrip(NOW)
     await toggleTaken(await addToList(milk, NOW), NOW)
     await finishShopping({ receipts: [] }, NOW + 1)
     await addToList(milk, NOW + 2)

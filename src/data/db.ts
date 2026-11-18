@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { ActiveTrip, Item, ListEntry, SavedSet, StoredPhoto, Trip } from '../domain/types'
+import type { Item, ListEntry, SavedSet, StoredPhoto, Trip } from '../domain/types'
 
 const DB_NAME = 'grocery-list'
 
@@ -8,7 +8,6 @@ class GroceryListDb extends Dexie {
   declare listEntries: EntityTable<ListEntry, 'id'>
   declare trips: EntityTable<Trip, 'id'>
   declare sets: EntityTable<SavedSet, 'id'>
-  declare settings: EntityTable<ActiveTrip, 'key'>
   declare photos: EntityTable<StoredPhoto, 'id'>
   declare thumbnails: EntityTable<StoredPhoto, 'id'>
 
@@ -23,9 +22,10 @@ class GroceryListDb extends Dexie {
       photos: 'id',
       thumbnails: 'id',
     })
+    this.version(2).stores({ settings: null })
   }
 }
 
 export const db = new GroceryListDb()
 
-export const allTables = () => [db.items, db.listEntries, db.trips, db.sets, db.settings, db.photos, db.thumbnails]
+export const allTables = () => [db.items, db.listEntries, db.trips, db.sets, db.photos, db.thumbnails]

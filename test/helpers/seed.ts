@@ -2,7 +2,7 @@ import { db } from '../../src/data/db'
 import { createItem, type ItemChanges, updateItem } from '../../src/data/itemsRepo'
 import { addToList, toggleTaken } from '../../src/data/listRepo'
 import { createSetFromEntries } from '../../src/data/setsRepo'
-import { finishShopping, startTrip } from '../../src/data/tripsRepo'
+import { finishShopping } from '../../src/data/tripsRepo'
 import { amountForNewEntry } from '../../src/domain/amount'
 import { CREATED_AT } from './records'
 
@@ -22,8 +22,6 @@ export async function seedItem(name: string, changes: ItemChanges = {}) {
 }
 
 export async function finishTripTaking(itemIds: string[], finishedAt: number) {
-  await startTrip(finishedAt)
-
   for (const itemId of itemIds) {
     await toggleTaken(await addToList(itemId, finishedAt), finishedAt)
   }
