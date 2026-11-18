@@ -5,12 +5,15 @@ import { useAction } from './useAction'
 
 const NAME_INPUT = 'name'
 
+type SaveName = (name: string) => Promise<unknown>
+
 type NamePrompt = {
   header: string
   placeholder: string
   confirmText: string
   currentName?: string
-  save: (name: string) => Promise<unknown>
+  save: SaveName
+  alternative?: { text: string; save: SaveName }
   onSaved?: () => void
 }
 
@@ -21,7 +24,18 @@ export function useNamePrompt() {
   const [presentAlert] = useIonAlert()
   const run = useAction()
 
-  return ({ header, placeholder, confirmText, currentName, save, onSaved }: NamePrompt) =>
+  const saveButton = (text: string, save: SaveName, onSaved?: () => void) => ({
+    text,
+    handler: (values: unknown) => {
+      if (isNameInput(values) && isName(values[NAME_INPUT])) {
+        const name = values[NAME_INPUT].trim()
+
+        run(() => save(name), onSaved)
+      }
+    },
+  })
+
+  return ({ header, placeholder, confirmText, currentName, save, alternative, onSaved }: NamePrompt) =>
     void presentAlert({
       header,
       inputs: [
@@ -35,16 +49,8 @@ export function useNamePrompt() {
       ],
       buttons: [
         { text: COMMON_COPY.cancel, role: 'cancel' },
-        {
-          text: confirmText,
-          handler: (values: unknown) => {
-            if (isNameInput(values) && isName(values[NAME_INPUT])) {
-              const name = values[NAME_INPUT].trim()
-
-              run(() => save(name), onSaved)
-            }
-          },
-        },
+        saveButton(confirmText, save, onSaved),
+        ...(alternative ? [saveButton(alternative.text, alternative.save, onSaved)] : []),
       ],
     })
 }

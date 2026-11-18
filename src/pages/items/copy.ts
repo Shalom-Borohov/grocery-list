@@ -1,6 +1,4 @@
 export const ITEMS_COPY = {
-  newItem: 'מצרך חדש',
-  itemName: 'שם המצרך',
   emptySet: 'ערכה ריקה',
   setFromList: 'ערכה מהרשימה',
   setNotFound: 'הערכה לא נמצאה',

@@ -3,15 +3,18 @@ import { amountForNewEntry } from '../domain/amount'
 import { type ListEntry, listEntrySchema } from '../domain/types'
 import { db } from './db'
 import { existing } from './errors'
+import { createItem } from './itemsRepo'
 
 const existingEntry = async (entryId: string) => existing(await db.listEntries.get(entryId), 'list entry', entryId)
+
+const listedEntry = (itemId: string) => db.listEntries.where('itemId').equals(itemId).first()
 
 export const newListEntry = (itemId: string, amount: ListEntry['amount'], now: number) =>
   parse(listEntrySchema, { id: crypto.randomUUID(), itemId, amount, state: 'waiting', addedAt: now })
 
 export const addToList = (itemId: string, now: number, amount?: ListEntry['amount']) =>
   db.transaction('rw', db.items, db.listEntries, async () => {
-    const listed = await db.listEntries.where('itemId').equals(itemId).first()
+    const listed = await listedEntry(itemId)
 
     if (listed) {
       return listed.id
@@ -49,3 +52,20 @@ export const updateEntry = (entryId: string, changes: EntryChanges) =>
   })
 
 export const removeEntry = (entryId: string) => db.listEntries.delete(entryId)
+
+type PointOutcome = 'pointed' | 'unchanged' | 'alreadyListed'
+
+export const pointEntryAt = (entryId: string, name: string, now: number) =>
+  db.transaction('rw', db.items, db.listEntries, async (): Promise<PointOutcome> => {
+    const { missedLastTrip: _missedLastTrip, ...entry } = await existingEntry(entryId)
+    const itemId = await createItem(name, now)
+    const listed = await listedEntry(itemId)
+
+    if (listed) {
+      return listed.id === entryId ? 'unchanged' : 'alreadyListed'
+    }
+
+    await putEntry({ ...entry, itemId })
+
+    return 'pointed'
+  })

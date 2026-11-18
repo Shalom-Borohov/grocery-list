@@ -24,7 +24,7 @@ export function AddToListFooter({ itemId, isListed }: AddToListFooterProps) {
       {isListed ? (
         <p className="item-listed" role="status">
           <TickIcon size={LISTED_TICK_SIZE} />
-          {ITEM_COPY.alreadyListed}
+          {COMMON_COPY.alreadyListed}
         </p>
       ) : (
         <button type="button" className="primary-button item-add-button" onClick={add}>

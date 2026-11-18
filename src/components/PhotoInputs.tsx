@@ -22,7 +22,7 @@ const REAR_CAMERA = 'environment'
 
 const CAMERA_ICON_SIZE = 28
 
-function PhotoInput({ className, opensCamera, onPick, children }: PhotoInputProps) {
+export function PhotoInput({ className, opensCamera, onPick, children }: PhotoInputProps) {
   function pickFirst(event: ChangeEvent<HTMLInputElement>) {
     const file = takePickedFile(event.currentTarget)
 
@@ -32,7 +32,7 @@ function PhotoInput({ className, opensCamera, onPick, children }: PhotoInputProp
   }
 
   return (
-    <label className={className}>
+    <label className={`photo-input ${className}`}>
       <input
         className="visually-hidden"
         type="file"
@@ -48,11 +48,11 @@ function PhotoInput({ className, opensCamera, onPick, children }: PhotoInputProp
 export function PhotoInputs({ cameraLabel, libraryLabel, onPick }: PhotoInputsProps) {
   return (
     <div className="photo-inputs">
-      <PhotoInput className="photo-input photo-input-camera" opensCamera onPick={onPick}>
+      <PhotoInput className="photo-input-camera" opensCamera onPick={onPick}>
         <CameraIcon size={CAMERA_ICON_SIZE} />
         <span>{cameraLabel}</span>
       </PhotoInput>
-      <PhotoInput className="photo-input photo-input-library" opensCamera={false} onPick={onPick}>
+      <PhotoInput className="photo-input-library" opensCamera={false} onPick={onPick}>
         <LibraryIcon />
         <span>{libraryLabel}</span>
       </PhotoInput>
