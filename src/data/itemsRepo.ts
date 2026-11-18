@@ -34,6 +34,20 @@ export const updateItem = (itemId: string, changes: ItemChanges) =>
     await db.items.put(item)
   })
 
+export async function updateItemUnlessNameTaken(itemId: string, changes: ItemChanges): Promise<'saved' | 'nameTaken'> {
+  try {
+    await updateItem(itemId, changes)
+
+    return 'saved'
+  } catch (error) {
+    if (error instanceof DuplicateNameError) {
+      return 'nameTaken'
+    }
+
+    throw error
+  }
+}
+
 export const setItemPhoto = (itemId: string, photo: ShrunkPhoto | undefined) =>
   db.transaction('rw', [db.items, ...photoTables()], async () => {
     const { photoId: oldPhotoId, ...item } = existing(await db.items.get(itemId), 'item', itemId)

@@ -24,6 +24,7 @@
   --app-row-gap: 8px;
   --app-stack-gap: 12px;
   --app-amount-column: 58px;
+  --app-photo-tile: 64px;
   --app-tap: 44px;
   --app-tab-bar-clearance: calc(64px + env(safe-area-inset-bottom));
 
@@ -239,6 +240,15 @@ ion-modal {
   color: var(--app-ink-soft);
   line-height: 1.45;
   text-align: center;
+}
+
+.photo-tile {
+  display: block;
+  width: var(--app-photo-tile);
+  height: var(--app-photo-tile);
+  border-radius: var(--app-radius-control);
+  background: var(--app-taken-ground);
+  object-fit: cover;
 }
 
 .visually-hidden {

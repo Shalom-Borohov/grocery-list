@@ -15,8 +15,8 @@ export function useAddMenu() {
 
   const askItemName = () =>
     askName({
-      header: ITEMS_COPY.newItem,
-      placeholder: ITEMS_COPY.itemName,
+      header: COMMON_COPY.newItem,
+      placeholder: COMMON_COPY.itemName,
       confirmText: COMMON_COPY.add,
       save: async (name) => router.push(itemPath('items', await createItem(name, Date.now()))),
     })
@@ -35,7 +35,7 @@ export function useAddMenu() {
   return (onList: ListEntry[]) =>
     void presentActionSheet({
       buttons: [
-        { text: ITEMS_COPY.newItem, handler: askItemName },
+        { text: COMMON_COPY.newItem, handler: askItemName },
         { text: ITEMS_COPY.emptySet, handler: () => askSetName(ITEMS_COPY.emptySet, []) },
         ...fromListButtons(onList),
         { text: COMMON_COPY.cancel, role: 'cancel' },

@@ -1,0 +1,16 @@
+.photo-section {
+  --photo-label-gap: 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--photo-label-gap);
+}
+
+.photo-section-thumbnail + .photo-inputs,
+.photo-inputs + .photo-section-remove {
+  margin-top: calc(var(--app-stack-gap) - var(--photo-label-gap));
+}
+
+.photo-section-remove {
+  align-self: flex-start;
+}

@@ -1,5 +1,6 @@
 import { IonContent, IonModal, useIonRouter } from '@ionic/react'
 import { AmountField } from '../../components/AmountField'
+import { PhotoSection } from '../../components/PhotoSection'
 import { PriceField } from '../../components/PriceField'
 import { SheetHeader } from '../../components/SheetHeader'
 import { useAction } from '../../components/useAction'
@@ -10,6 +11,7 @@ import type { Trip } from '../../domain/types'
 import { itemPath } from '../../navigation/paths'
 import { LIST_COPY } from './copy'
 import type { ListRow } from './listRows'
+import { useEditRowName } from './useEditRowName'
 
 type RowSheetProps = {
   row: ListRow | undefined
@@ -23,6 +25,7 @@ type RowSheetContentProps = Omit<RowSheetProps, 'row'> & { row: ListRow }
 function RowSheetContent({ row: { entry, item }, trips, isShopping, onClose }: RowSheetContentProps) {
   const router = useIonRouter()
   const run = useAction()
+  const editName = useEditRowName()
 
   function goToItem() {
     onClose()
@@ -45,7 +48,11 @@ function RowSheetContent({ row: { entry, item }, trips, isShopping, onClose }: R
             hint={lastPrice(item.id, trips)}
             onChange={(price) => run(() => updateEntry(entry.id, { price }))}
           />
+          <PhotoSection item={item} />
           <div className="list-sheet-actions">
+            <button type="button" className="quiet-button" onClick={() => editName({ entry, item })}>
+              {LIST_COPY.editName}
+            </button>
             {isShopping && (
               <button type="button" className="quiet-button" onClick={() => run(() => toggleMissing(entry.id))}>
                 {entry.state === 'missing' ? LIST_COPY.wasThere : COMMON_COPY.missing}
@@ -76,6 +83,7 @@ export function RowSheet({ row, ...rest }: RowSheetProps) {
       isOpen={row !== undefined}
       breakpoints={SHEET_BREAKPOINTS}
       initialBreakpoint={SHEET_HEIGHT}
+      expandToScroll={false}
       onDidDismiss={rest.onClose}
     >
       {row && <RowSheetContent row={row} {...rest} />}

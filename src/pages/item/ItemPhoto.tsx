@@ -16,7 +16,7 @@ export function ItemPhoto({ photoId, name }: ItemPhotoProps) {
   return (
     <>
       <button type="button" className="item-photo-button" aria-label={ITEM_COPY.showPhoto} onClick={() => setOpen(true)}>
-        <ItemThumbnail photoId={photoId} alt={DECORATIVE_IMAGE} className="item-photo" />
+        <ItemThumbnail photoId={photoId} alt={DECORATIVE_IMAGE} className="photo-tile" />
       </button>
       <PhotoViewer
         photo={isOpen ? { photoId, title: name, alt: ITEM_COPY.photoOf(name) } : undefined}

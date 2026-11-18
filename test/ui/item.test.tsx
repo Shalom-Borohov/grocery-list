@@ -228,6 +228,17 @@ describe('item page', () => {
     expect(await screen.findByRole('img', { name: 'התמונה של עגבניות שרי' })).toHaveAttribute('src', PHOTO_URL)
   })
 
+  it('adds a photo from the card when there is none, and the add tile gives way to the photo', async () => {
+    const itemId = await addTomatoes()
+
+    renderAt(`/tabs/items/item/${itemId}`)
+
+    fireEvent.change(await screen.findByLabelText('הוספת תמונה'), { target: { files: [cameraPhoto()] } })
+
+    expect(await screen.findByRole('button', { name: 'הצגת התמונה' })).toBeVisible()
+    expect(screen.queryByLabelText('הוספת תמונה')).not.toBeInTheDocument()
+  })
+
   it('removes the photo from the edit sheet after asking', async () => {
     const itemId = await addTomatoes()
 
