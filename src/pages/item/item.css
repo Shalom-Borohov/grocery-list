@@ -56,14 +56,13 @@
   border-radius: var(--app-radius-control);
 }
 
-.item-photo,
-.item-edit-thumbnail {
-  display: block;
-  width: 64px;
-  height: 64px;
-  border-radius: var(--app-radius-control);
-  background: var(--app-taken-ground);
-  object-fit: cover;
+.photo-input.item-add-photo {
+  flex: none;
+  width: var(--app-photo-tile);
+  height: var(--app-photo-tile);
+  padding: 0;
+  background: var(--app-ground);
+  color: var(--app-ink-soft);
 }
 
 .item-note {
@@ -183,19 +182,3 @@
   font-weight: 500;
 }
 
-.item-edit-photo {
-  --photo-label-gap: 6px;
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--photo-label-gap);
-}
-
-.item-edit-thumbnail + .photo-inputs,
-.photo-inputs + .item-remove-photo {
-  margin-top: calc(var(--app-stack-gap) - var(--photo-label-gap));
-}
-
-.item-remove-photo {
-  align-self: flex-start;
-}

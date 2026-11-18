@@ -2,35 +2,20 @@ import { IonContent, IonModal } from '@ionic/react'
 import { useState } from 'react'
 import { AmountField } from '../../components/AmountField'
 import { NoteField } from '../../components/NoteField'
+import { PhotoSection } from '../../components/PhotoSection'
 import { SheetHeader } from '../../components/SheetHeader'
 import { TextField } from '../../components/TextField'
 import { useAction } from '../../components/useAction'
 import { COMMON_COPY } from '../../copy/common'
-import { DuplicateNameError } from '../../data/errors'
-import { type ItemChanges, updateItem } from '../../data/itemsRepo'
+import { updateItemUnlessNameTaken } from '../../data/itemsRepo'
 import { DEFAULT_AMOUNT } from '../../domain/amount'
 import { isName, type Item } from '../../domain/types'
 import { ITEM_COPY } from './copy'
-import { PhotoSection } from './PhotoSection'
 
 type EditItemSheetProps = {
   item: Item
   isOpen: boolean
   onClose: () => void
-}
-
-async function savedUnlessNameTaken(itemId: string, changes: ItemChanges) {
-  try {
-    await updateItem(itemId, changes)
-
-    return true
-  } catch (error) {
-    if (error instanceof DuplicateNameError) {
-      return false
-    }
-
-    throw error
-  }
 }
 
 function EditItemForm({ item, onClose }: Omit<EditItemSheetProps, 'isOpen'>) {
@@ -42,8 +27,8 @@ function EditItemForm({ item, onClose }: Omit<EditItemSheetProps, 'isOpen'>) {
 
   function save() {
     run(
-      () => savedUnlessNameTaken(item.id, { name: isName(name) ? name : item.name, note, usualAmount }),
-      (isSaved) => (isSaved ? onClose() : setNameTaken(true)),
+      () => updateItemUnlessNameTaken(item.id, { name: isName(name) ? name : item.name, note, usualAmount }),
+      (outcome) => (outcome === 'saved' ? onClose() : setNameTaken(true)),
     )
   }
 
@@ -64,7 +49,7 @@ function EditItemForm({ item, onClose }: Omit<EditItemSheetProps, 'isOpen'>) {
           <TextField
             label={ITEM_COPY.name}
             defaultValue={item.name}
-            error={isNameTaken ? ITEM_COPY.duplicateName : undefined}
+            error={isNameTaken ? COMMON_COPY.duplicateName : undefined}
             onTextChange={changeName}
           />
           <AmountField label={ITEM_COPY.usualAmount} amount={usualAmount} onChange={setUsualAmount} />

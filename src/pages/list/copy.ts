@@ -14,6 +14,8 @@ export const LIST_COPY = {
   remove: 'הסרה',
   wasThere: 'היה בכל זאת',
   removeFromList: 'הסרה מהרשימה',
+  editName: 'עריכת שם',
+  rename: 'שינוי השם',
   finishTitle: 'סיום הקנייה',
   finishCounts: (taken: number, missing: number) =>
     joinParts([taken > 0 ? `נלקחו ${taken}` : undefined, missing > 0 ? `${COMMON_COPY.missing} ${missing}` : undefined]),
