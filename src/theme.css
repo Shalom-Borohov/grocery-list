@@ -22,6 +22,7 @@
   --app-radius-pill: 999px;
   --app-row-height: 60px;
   --app-row-gap: 8px;
+  --app-stack-gap: 12px;
   --app-amount-column: 58px;
   --app-tap: 44px;
   --app-tab-bar-clearance: calc(64px + env(safe-area-inset-bottom));

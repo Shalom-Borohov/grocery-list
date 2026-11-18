@@ -1,17 +1,20 @@
 .price-field {
+  --price-label-gap: 6px;
+
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--price-label-gap);
 }
 
 .price-field-label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--price-label-gap);
 }
 
 .price-field-hint {
   align-self: flex-start;
+  margin-top: calc(var(--app-stack-gap) - var(--price-label-gap));
 }
 
 .price-field-box {

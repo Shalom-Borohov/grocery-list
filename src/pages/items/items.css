@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: space-between;
   min-height: 52px;
+  margin-bottom: var(--app-stack-gap);
   padding-inline-end: var(--app-gutter);
 }
 
@@ -14,7 +15,7 @@
   display: flex;
   gap: var(--app-row-gap);
   margin: 0;
-  padding: 4px var(--app-gutter) 12px;
+  padding: 4px var(--app-gutter) var(--app-stack-gap);
   overflow-x: auto;
   list-style: none;
   scrollbar-width: none;

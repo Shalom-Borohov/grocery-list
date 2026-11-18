@@ -33,7 +33,7 @@
 }
 
 .add-picker .search-field {
-  margin-block: 4px;
+  margin-block: var(--app-stack-gap) 4px;
 }
 
 .picker-body {
@@ -47,7 +47,7 @@
 .picker-sets {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--app-stack-gap) var(--app-row-gap);
   padding: 0 var(--app-gutter);
 }
 

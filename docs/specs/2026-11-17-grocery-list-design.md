@@ -85,6 +85,7 @@ Items marked **(assumed)** were settled without asking the owner and can be stru
 
 66. **On a trip's page the total is the page's one big numeral, edited in place, and an empty note is a single "הוספת הערה" row until tapped.** Why: one big numeral per screen, and a calm page. (added 2026-11-17, clarifies 37; from the finish review)
 67. **When an item is already on the list, its page says "כבר ברשימה" with a tick in place of the add button.** Why: a disabled yellow button read as broken. (added 2026-11-17, clarifies 33; from the finish review)
+68. **A button never sits closer than 12px to a control stacked above or below it** (another button, a field, a search box, a unit switch), and text or a picture stacked directly above a button keeps the same 12px unless it is that button's own label: one theme value, `--app-stack-gap`. Label rows in a list keep their 8px (30), buttons side by side keep the space they had (8–10px), a label stays 6px from its own field, and sheet sections keep 16px. Why: in the add picker "סיום" sat 4px above the search field, and the owner asked for the same room on every screen (issue #3). (added 2026-11-18)
 
 ### Data
 
