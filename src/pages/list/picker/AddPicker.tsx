@@ -2,7 +2,7 @@ import { IonContent, IonHeader, IonModal } from '@ionic/react'
 import { useMemo, useState } from 'react'
 import { SearchField } from '../../../components/SearchField'
 import { useRecords } from '../../../data/hooks'
-import type { Records } from '../../../domain/types'
+import type { Item, ListEntry, Records } from '../../../domain/types'
 import { timesTakenByItem, usualItemIds } from '../../../domain/usualHints'
 import { PICKER_COPY } from './copy'
 import { PickerBrowse } from './PickerBrowse'
@@ -30,21 +30,51 @@ function PickerBody({ records, onDismiss }: { records: Records; onDismiss: () =>
   const timesTaken = useMemo(() => timesTakenByItem(records.trips), [records.trips])
   const usualIds = useMemo(() => usualItemIds(records.trips), [records.trips])
   const entryByItem = new Map(records.entries.map((listEntry) => [listEntry.itemId, listEntry]))
-  const { addedCount, toggleItem, createAndAdd, pour } = usePickerActions(records.entries)
+  const { addedCount, toggleItem, createAndAdd, addTyped, pour } = usePickerActions(records.entries)
   const rowsProps = { entryByItem, onToggle: toggleItem }
 
-  const create = (name: string) => createAndAdd(name, () => setQuery(EMPTY_QUERY))
+  const [isResultTapped, setResultTapped] = useState(false)
+  const unusedQuery = isResultTapped ? EMPTY_QUERY : query
+
+  const changeQuery = (nextQuery: string) => {
+    setQuery(nextQuery)
+    setResultTapped(false)
+  }
+
+  const clearSubmitted = (submitted: string) => () => {
+    setQuery((current) => (current === submitted ? EMPTY_QUERY : current))
+    setResultTapped(false)
+  }
+
+  const create = (name: string) => createAndAdd(name, clearSubmitted(query))
+
+  const toggleResult = (item: Item, onList: ListEntry | undefined) => {
+    setResultTapped(true)
+    toggleItem(item, onList)
+  }
 
   return (
     <>
       <IonHeader className="ion-no-border">
-        <PickerHeader addedCount={addedCount} onDone={onDismiss} />
-        <SearchField query={query} placeholder={PICKER_COPY.searchPlaceholder} onQueryChange={setQuery} />
+        <PickerHeader addedCount={addedCount} onDone={() => addTyped(unusedQuery, onDismiss)} />
+        <SearchField
+          query={query}
+          placeholder={PICKER_COPY.searchPlaceholder}
+          onQueryChange={changeQuery}
+          onSubmit={() => addTyped(unusedQuery, clearSubmitted(query))}
+        />
       </IonHeader>
       <IonContent>
         <div className="picker-body">
           {query.trim() ? (
-            <PickerSearchResults records={records} timesTaken={timesTaken} query={query} onCreate={create} {...rowsProps} />
+            <PickerSearchResults
+              records={records}
+              timesTaken={timesTaken}
+              query={query}
+              onCreate={create}
+              entryByItem={entryByItem}
+              onToggle={toggleResult}
+            />
           ) : (
             <PickerBrowse
               records={records}

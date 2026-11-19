@@ -1,37 +1,16 @@
-import { IonApp } from '@ionic/react'
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem, updateItem } from '../../src/data/itemsRepo'
 import { addToList, toggleTaken } from '../../src/data/listRepo'
-import { RecordsProvider } from '../../src/data/RecordsProvider'
-import { allRecords } from '../../src/data/recordsContext'
-import { AddPicker } from '../../src/pages/list/picker/AddPicker'
 import { resetDb } from '../helpers/db'
 import { modalDismissed, toastMessages } from '../helpers/overlays'
+import { listedItemNames, pickerTree, renderPicker, search } from '../helpers/picker'
 import { amount, CREATED_AT } from '../helpers/records'
 import { finishTripTaking, seedSet } from '../helpers/seed'
 
 const DAY_MS = 86_400_000
 
-const pickerTree = (isOpen: boolean, onDismiss: () => void) => (
-  <IonApp>
-    <RecordsProvider>
-      <AddPicker isOpen={isOpen} onDismiss={onDismiss} />
-    </RecordsProvider>
-  </IonApp>
-)
-
-const renderPicker = (onDismiss = () => {}) => render(pickerTree(true, onDismiss))
-
 const shopFor = (itemIds: string[], tripNumber: number) => finishTripTaking(itemIds, CREATED_AT + tripNumber * DAY_MS)
-
-async function listedItemNames() {
-  const { items, entries } = await allRecords()
-
-  return entries.map((listEntry) => items.find((candidate) => candidate.id === listEntry.itemId)?.name)
-}
-
-const search =(searchbox: HTMLElement, text: string) => fireEvent.change(searchbox, { target: { value: text } })
 
 const rowNames = (sectionElement: HTMLElement) =>
   within(sectionElement)
