@@ -17,8 +17,13 @@ export function usePickerActions(entries: ListEntry[]) {
   const pour = usePourSet(markAdded)
 
   async function addItem(itemId: string, now: number) {
+    const wasListed = listedItemIds.has(itemId)
+
     await addToList(itemId, now)
-    markAdded([itemId])
+
+    if (!wasListed) {
+      markAdded([itemId])
+    }
   }
 
   function toggleItem(item: Item, onList: ListEntry | undefined) {
@@ -39,5 +44,17 @@ export function usePickerActions(entries: ListEntry[]) {
     run(async () => addItem(await createItem(name, now), now), onAdded)
   }
 
-  return { addedCount, toggleItem, createAndAdd, pour }
+  function addTyped(query: string, onAdded: () => void) {
+    const typedName = query.trim()
+
+    if (!typedName) {
+      onAdded()
+
+      return
+    }
+
+    createAndAdd(typedName, onAdded)
+  }
+
+  return { addedCount, toggleItem, createAndAdd, addTyped, pour }
 }
