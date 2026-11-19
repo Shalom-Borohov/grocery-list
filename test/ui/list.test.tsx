@@ -46,29 +46,29 @@ describe('the list', () => {
     expect(column.querySelector('.amount-numeral')).toHaveClass('is-quiet')
   })
 
-  it('ticks an entry with one tap, with no start step, and shows the shop header only while anything is ticked', async () => {
+  it('ticks an entry with one tap on its ring, with no start step, and shows the shop header only while anything is ticked', async () => {
     await addToList(await createItem('חלב', NOW), NOW)
     await addToList(await createItem('ביצים', NOW), NOW + 1)
 
     renderAt('/tabs/list')
 
-    const milkRow = await screen.findByRole('button', { name: 'חלב' })
+    const milkRing = await screen.findByRole('button', { name: 'נלקח: חלב' })
 
-    expect(milkRow).toHaveAttribute('aria-pressed', 'false')
-    expect(milkRow.querySelector('.tick-ring')).toBeInTheDocument()
+    expect(milkRing).toHaveAttribute('aria-pressed', 'false')
+    expect(milkRing.querySelector('.tick-ring')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'התחלת קנייה' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'סיום' })).not.toBeInTheDocument()
 
-    fireEvent.click(milkRow)
+    fireEvent.click(milkRing)
 
     expect(await screen.findByRole('heading', { name: 'נשארו 1' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'חלב' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'נלקח: חלב' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: 'סיום' })).toBeVisible()
 
-    fireEvent.click(screen.getByRole('button', { name: 'חלב' }))
+    fireEvent.click(screen.getByRole('button', { name: 'נלקח: חלב' }))
 
     expect(await screen.findByRole('heading', { level: 1, name: 'רשימה' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'חלב' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'נלקח: חלב' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.queryByRole('button', { name: 'סיום' })).not.toBeInTheDocument()
   })
 
@@ -133,6 +133,20 @@ describe('the list', () => {
 
     expect(await screen.findByRole('button', { name: 'הסרה מהרשימה' })).toBeInTheDocument()
     expect((await allRecords()).entries.find((entry) => entry.itemId === milk)?.state).toBe('waiting')
+  })
+
+  it.each([
+    ['waiting', async (_entryId: string) => undefined],
+    ['taken', (entryId: string) => toggleTaken(entryId, NOW + 1)],
+    ['missing', (entryId: string) => toggleMissing(entryId)],
+  ])('opens the row sheet from a tap on a %s row, and leaves its state as it was', async (state, markRow) => {
+    await markRow(await addToList(await createItem('חלב', NOW), NOW))
+
+    renderAt('/tabs/list')
+    fireEvent.click(await screen.findByRole('button', { name: 'חלב' }))
+
+    expect(await screen.findByRole('button', { name: 'הסרה מהרשימה' })).toBeInTheDocument()
+    expect((await allRecords()).entries[0]?.state).toBe(state)
   })
 
   it('goes from the row sheet to the item page in the list stack', async () => {

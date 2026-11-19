@@ -5,6 +5,7 @@ export const LIST_COPY = {
   title: COMMON_COPY.list,
   rowDetails: (name: string) => `כמות ומחיר: ${name}`,
   rowPhoto: (name: string) => `${COMMON_COPY.photo}: ${name}`,
+  rowTick: (name: string) => `נלקח: ${name}`,
   empty: 'הרשימה ריקה. מה שנגמר בבית מוסיפים בכפתור +.',
   left: 'נשארו',
   leftHeading: (count: number) => `נשארו ${count}`,

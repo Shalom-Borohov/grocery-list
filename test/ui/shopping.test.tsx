@@ -13,6 +13,8 @@ const NOW = 1_700_000_000_000
 
 const rowBody = (name: string) => screen.getByRole('button', { name })
 
+const ring = (name: string) => screen.getByRole('button', { name: `נלקח: ${name}` })
+
 const rowNames = () => Array.from(document.querySelectorAll('.label-row-name'), (element) => element.textContent)
 
 async function entryOf(itemId: string) {
@@ -66,25 +68,42 @@ describe('shopping from the list', () => {
     expect(await screen.findByText('1 בעגלה')).toBeVisible()
   })
 
-  it('takes an item with one tap: it sinks, is struck and ticked, and the count drops; a second tap puts it back', async () => {
+  it('takes an item with one tap on its ring: it sinks, is struck and ticked, and the count drops; a second tap puts it back', async () => {
     await shopWith(['חלב', 'ביצים', 'קפה'])
 
     renderAt('/tabs/list')
     await screen.findByText('חלב')
 
-    fireEvent.click(rowBody('חלב'))
+    fireEvent.click(ring('חלב'))
 
     await screen.findByRole('heading', { name: 'נשארו 2' })
     expect(rowNames()).toEqual(['ביצים', 'קפה', 'חלב'])
-    expect(rowBody('חלב')).toHaveAttribute('aria-pressed', 'true')
-    expect(rowBody('חלב').closest('.label-row')).toHaveClass('is-taken')
-    expect(rowBody('חלב').querySelector('.tick-ring')).toHaveClass('is-ticked')
+    expect(ring('חלב')).toHaveAttribute('aria-pressed', 'true')
+    expect(ring('חלב').closest('.label-row')).toHaveClass('is-taken')
+    expect(ring('חלב').querySelector('.tick-ring')).toHaveClass('is-ticked')
     expect(screen.getByText('1 בעגלה')).toBeVisible()
 
-    fireEvent.click(rowBody('חלב'))
+    fireEvent.click(ring('חלב'))
 
-    await waitFor(() => expect(rowBody('חלב')).toHaveAttribute('aria-pressed', 'false'))
+    await waitFor(() => expect(ring('חלב')).toHaveAttribute('aria-pressed', 'false'))
     expect(rowNames()).toEqual(['חלב', 'ביצים', 'קפה'])
+  })
+
+  it('takes an item the shop did not have with one tap on its ring, and a second tap leaves it waiting', async () => {
+    const [milk] = await shopWith(['חלב', 'ביצים'])
+
+    await toggleMissing((await entryOf(milk)).id)
+
+    renderAt('/tabs/list')
+    fireEvent.click(await screen.findByRole('button', { name: 'נלקח: חלב' }))
+
+    await waitFor(() => expect(ring('חלב')).toHaveAttribute('aria-pressed', 'true'))
+    expect((await entryOf(milk)).state).toBe('taken')
+
+    fireEvent.click(ring('חלב'))
+
+    await waitFor(() => expect(ring('חלב')).toHaveAttribute('aria-pressed', 'false'))
+    expect((await entryOf(milk)).state).toBe('waiting')
   })
 
   it('changes the amount and marks the item missing from the sheet the amount column opens', async () => {
