@@ -21,7 +21,7 @@ OWN-WORLD: Cool grey shelf ground #e9ecef; white label cards #ffffff at 14px rad
 
 STORY: The owner sees how many items are left, runs an eye down one column of amounts, reads the note under a name at the shelf, taps once, and the label greys out and sinks.
 
-FIRST VIEWPORT: 20px status strip on the grey ground; a 96px header with a 72px yellow block holding the items-left numeral at 46px, "נשארו" at 28px beside it and "12 בעגלה · 1 לא היה" under it, then a "סיום" outline pill and a round ink add button; a column of 60px label rows with 8px gaps, each with a fixed 58px amount column (26px numeral, unit under it), the name at 17px, one 13px line of note or verdict, an optional 40px photo and a 28px tick ring; a four-tab bar (רשימה, קניות, מצרכים, הגדרות) with a small yellow bar over the active tab.
+FIRST VIEWPORT: 20px status strip on the grey ground; a 96px header with a 72px yellow block holding the items-left numeral at 46px, "נשארו" at 28px beside it and "12 בעגלה · 1 לא היה" under it, then a "סיום" outline pill and a round ink add button; a column of 60px label rows with 8px gaps, each with a fixed 58px amount column (26px numeral, unit under it), the name at 17px, one 13px line of note or verdict, a 28px tick ring and, at the row's end, a 40px photo square (a camera on grey when there's no photo) that opens the row's sheet (spec 84); a four-tab bar (רשימה, קניות, מצרכים, הגדרות) with a small yellow bar over the active tab.
 
 Signature interaction: one tap anywhere on a label takes the item; the label turns grey, its name is struck through, its ring fills yellow with a tick, and it sinks under the waiting ones. Motion: the sink is a single 200ms slide, and a plain swap under reduce-motion.
 

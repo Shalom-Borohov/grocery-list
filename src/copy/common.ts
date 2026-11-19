@@ -20,6 +20,7 @@ export const COMMON_COPY = {
   separator: ' · ',
   buyAgain: 'לקנות שוב',
   neverAgain: 'לא לקנות שוב',
+  nextTime: 'לפעם הבאה',
   missing: 'לא היה',
   missedLastTrip: 'לא היה בפעם שעברה',
   amount: 'כמות',
@@ -33,6 +34,7 @@ export const COMMON_COPY = {
   photo: 'תמונה',
   takePhoto: 'צילום',
   choosePhoto: 'מהגלריה',
+  showPhoto: 'הצגת התמונה',
   removePhoto: 'הסרת התמונה',
   removePhotoQuestion: 'להסיר את התמונה?',
   removePhotoMessage: 'התמונה תימחק מהטלפון.',
@@ -51,6 +53,7 @@ export const COMMON_COPY = {
   receiptNumber: (number: number) => `קבלה ${number}`,
   pouredCount: (count: number) => `נוספו ${count} לרשימה`,
   sameAsLastTime: (price: string) => `כמו בפעם שעברה: ${price}`,
+  photoOf: (name: string) => `התמונה של ${name}`,
   shekels: (amount: number) =>
     `₪${amount.toLocaleString('he-IL', { minimumFractionDigits: Number.isInteger(amount) ? 0 : AGOROT_DIGITS, maximumFractionDigits: AGOROT_DIGITS })}`,
   itemCount: (count: number) => (count === SINGLE ? 'מצרך אחד' : `${count} מצרכים`),

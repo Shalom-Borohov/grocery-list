@@ -1,12 +1,12 @@
 import { AmountColumn } from '../../components/LabelRow'
 import { VerdictSwitch } from '../../components/VerdictSwitch'
+import { ViewablePhoto } from '../../components/ViewablePhoto'
 import { amountParts } from '../../copy/amountCopy'
 import type { ItemHistory } from '../../domain/itemHistory'
 import type { Item } from '../../domain/types'
 import { AddPhotoTile } from './AddPhotoTile'
 import { ITEM_COPY } from './copy'
 import { itemFacts } from './itemFacts'
-import { ItemPhoto } from './ItemPhoto'
 import { NoteBox } from './NoteBox'
 
 type ItemCardProps = {
@@ -41,7 +41,11 @@ export function ItemCard({ item, history, onEdit }: ItemCardProps) {
           </h1>
           <p className="item-facts">{itemFacts(history)}</p>
         </div>
-        {item.photoId ? <ItemPhoto photoId={item.photoId} name={item.name} /> : <AddPhotoTile itemId={item.id} />}
+        {item.photoId ? (
+          <ViewablePhoto photoId={item.photoId} name={item.name} className="item-photo-button" />
+        ) : (
+          <AddPhotoTile itemId={item.id} />
+        )}
       </div>
       <VerdictSwitch item={item} label={ITEM_COPY.verdict} />
       <NoteBox note={item.note} onOpen={onEdit} />

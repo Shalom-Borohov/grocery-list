@@ -1,15 +1,18 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createItem, updateItem } from '../../src/data/itemsRepo'
-import { addToList, toggleMissing } from '../../src/data/listRepo'
+import { createItem, setItemPhoto, updateItem } from '../../src/data/itemsRepo'
+import { addToList, toggleMissing, toggleTaken } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
 import { expectElementsInOrder, swipeOption } from '../helpers/ionic'
 import { modalDismissed } from '../helpers/overlays'
+import { fakeShrunkPhoto, PHOTO_URL, stubObjectUrls } from '../helpers/photo'
 import { amount } from '../helpers/records'
 import { currentPath, renderAt } from '../helpers/renderAt'
 
 const NOW = 1_700_000_000_000
+
+stubObjectUrls()
 
 describe('the list', () => {
   beforeEach(resetDb)
@@ -110,6 +113,26 @@ describe('the list', () => {
 
     expect((await allRecords()).entries).toEqual([])
     expect(await screen.findByText(/הרשימה ריקה/)).toBeVisible()
+  })
+
+  it('ends every row with a photo square that opens the row sheet without taking the item', async () => {
+    const milk = await createItem('חלב', NOW)
+
+    await setItemPhoto(milk, fakeShrunkPhoto())
+    await addToList(milk, NOW)
+    await toggleTaken(await addToList(await createItem('ביצים', NOW), NOW + 1), NOW + 2)
+
+    renderAt('/tabs/list')
+
+    const milkSquare = await screen.findByRole('button', { name: 'תמונה: חלב' })
+
+    await waitFor(() => expect(milkSquare.querySelector('img')).toHaveAttribute('src', PHOTO_URL))
+    expect(screen.getByRole('button', { name: 'תמונה: ביצים' }).querySelector('svg')).toBeInTheDocument()
+
+    fireEvent.click(milkSquare)
+
+    expect(await screen.findByRole('button', { name: 'הסרה מהרשימה' })).toBeInTheDocument()
+    expect((await allRecords()).entries.find((entry) => entry.itemId === milk)?.state).toBe('waiting')
   })
 
   it('goes from the row sheet to the item page in the list stack', async () => {

@@ -8,6 +8,7 @@ import { removeEntry, toggleMissing, toggleTaken } from '../../data/listRepo'
 import { secondaryLine } from '../../domain/secondaryLine'
 import type { ListEntry } from '../../domain/types'
 import { LIST_COPY } from './copy'
+import { EntryPhotoButton } from './EntryPhotoButton'
 import type { ListRow } from './listRows'
 
 type EntryRowProps = {
@@ -51,9 +52,9 @@ export function EntryRow({ row: { entry, item }, onOpenSheet }: EntryRowProps) {
           name={item.name}
           amount={entry.amount}
           secondary={line && <SecondaryText line={line} />}
-          photoId={item.photoId}
           isTaken={isTaken}
           trailing={<TickRing isTicked={isTaken} />}
+          end={<EntryPhotoButton photoId={item.photoId} label={LIST_COPY.rowPhoto(item.name)} onTap={onOpenSheet} />}
           pressed={isTaken}
           columnLabel={LIST_COPY.rowDetails(item.name)}
           onColumnTap={onOpenSheet}

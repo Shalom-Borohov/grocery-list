@@ -1,10 +1,13 @@
 import { IonContent, IonModal, useIonRouter } from '@ionic/react'
+import { AddableNote } from '../../components/AddableNote'
 import { AmountField } from '../../components/AmountField'
 import { PhotoSection } from '../../components/PhotoSection'
 import { PriceField } from '../../components/PriceField'
 import { SheetHeader } from '../../components/SheetHeader'
 import { useAction } from '../../components/useAction'
+import { VerdictSwitch } from '../../components/VerdictSwitch'
 import { COMMON_COPY } from '../../copy/common'
+import { updateItem } from '../../data/itemsRepo'
 import { removeEntry, toggleMissing, updateEntry } from '../../data/listRepo'
 import { lastPrice } from '../../domain/itemHistory'
 import type { Trip } from '../../domain/types'
@@ -46,6 +49,18 @@ function RowSheetContent({ row: { entry, item }, trips, onClose }: RowSheetConte
             price={entry.price}
             hint={lastPrice(item.id, trips)}
             onChange={(price) => run(() => updateEntry(entry.id, { price }))}
+          />
+          <section className="list-verdict">
+            <span className="field-label" aria-hidden="true">
+              {COMMON_COPY.nextTime}
+            </span>
+            <VerdictSwitch item={item} label={COMMON_COPY.nextTime} />
+          </section>
+          <AddableNote
+            key={item.id}
+            note={item.note}
+            addButtonClassName="list-add-note"
+            onSave={(note) => run(() => updateItem(item.id, { note }))}
           />
           <PhotoSection item={item} />
           <div className="list-sheet-actions">

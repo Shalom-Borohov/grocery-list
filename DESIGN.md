@@ -252,6 +252,7 @@ Everything is rounded; nothing is square or edge to edge. Label rows and control
 The shelf label. A white 14px card, min 60px, with a fixed amount column (numeral at 1.625rem/800, unit as a caption beneath, 1px divider on its inline-end side), then the name (body strong, one line) and one secondary line (label size): the note, or the verdict as a word ("לקנות שוב" in ink 500, "לא לקנות שוב" in warning red 500), or "לא היה" in red. An optional 40px photo and a trailing slot (tick ring, chevron, or price) follow. The whole row is the tap target.
 - **Taken:** taken grey ground, no shadow, taken text, name struck through, tick ring filled yellow with an ink tick; it sinks below waiting rows with a single 200ms ease-out slide (12px, from 0.6 opacity), a plain swap under reduced motion.
 - **Swipe:** the row sits in an end-side swipe; every swipe action also has a tap path.
+- **On the list:** the photo leaves the tap target and becomes a square at the row's end, after the tick ring: the 40px photo, or a 40px ground tile with a 20px soft-ink camera. It opens the row's sheet; the rest of the row still takes the item. It dims with a taken row.
 
 ### Tick Ring
 28px circle with a 2px ink stroke; filled yellow with an ink tick when taken.

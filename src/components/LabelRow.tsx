@@ -2,7 +2,7 @@ import { type ReactNode, useId } from 'react'
 import { amountParts, amountText, quantityText } from '../copy/amountCopy'
 import { joinParts } from '../copy/joinParts'
 import type { Amount } from '../domain/types'
-import { ItemThumbnail } from './ItemThumbnail'
+import { DECORATIVE_IMAGE, ItemThumbnail } from './ItemThumbnail'
 import './LabelRow.css'
 
 type LabelRowProps = {
@@ -13,6 +13,7 @@ type LabelRowProps = {
   photoId?: string
   isTaken?: boolean
   trailing?: ReactNode
+  end?: ReactNode
   pressed?: boolean
   columnLabel?: string
   onTap?: () => void
@@ -33,8 +34,6 @@ const NUMERAL_CLASSES: Record<AmountColumnSize, string> = {
 }
 
 const UNIT_CLASSES: Record<AmountColumnSize, string> = { row: 'amount-unit', large: 'amount-unit is-large' }
-
-const DECORATIVE_IMAGE = ''
 
 export function AmountColumn({ numeral, unitLabel, size }: AmountColumnProps) {
   return (
@@ -61,7 +60,7 @@ function AmountColumnOf({ amount, showsPlainAmount }: AmountColumnOfProps) {
 }
 
 export function LabelRow(props: LabelRowProps) {
-  const { name, secondary, amount, column, photoId, isTaken, trailing, pressed, onTap, onColumnTap } = props
+  const { name, secondary, amount, column, photoId, isTaken, trailing, end, pressed, onTap, onColumnTap } = props
   const nameId = useId()
   const secondaryId = useId()
   const columnContent = column ?? (amount && <AmountColumnOf amount={amount} showsPlainAmount={onColumnTap !== undefined} />)
@@ -107,6 +106,7 @@ export function LabelRow(props: LabelRowProps) {
       ) : (
         <span className="label-row-body">{body}</span>
       )}
+      {end}
     </div>
   )
 }

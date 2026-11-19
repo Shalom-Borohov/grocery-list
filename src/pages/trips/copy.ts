@@ -36,7 +36,7 @@ export const TRIPS_COPY = {
   deleteReceipt: (position: number) => `מחיקת קבלה ${position}`,
   deleteReceiptQuestion: COMMON_COPY.deleteQuestion('הקבלה'),
   deleteReceiptWarning: 'הצילום יימחק מהטלפון.',
-  verdict: 'לפעם הבאה',
+  verdict: COMMON_COPY.nextTime,
   saveAsSet: 'שמירה כערכה',
   setSaved: 'הערכה נשמרה',
   deleteTrip: 'מחיקת הקנייה',
