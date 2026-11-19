@@ -1,5 +1,7 @@
 import { usePhotoUrl } from '../photo/usePhotoUrl'
 
+export const DECORATIVE_IMAGE = ''
+
 type ItemThumbnailProps = {
   photoId: string
   alt: string
