@@ -2,7 +2,7 @@
 
 ## What this is
 
-מצרכים: a personal iPhone PWA for grocery shopping. One open list, with no shopping mode: one tap takes an item, at home or in the shop; while anything is taken or marked לא היה, "סיום" files the trip with an optional total, receipt photos and note. Every item keeps a note, a photo, a verdict (לקנות שוב / לא לקנות שוב) and the prices recorded on trips, so the next trip starts with what the last ones taught. Hebrew, RTL, always light. Everything lives in IndexedDB on the device, with a zip backup file (`data.json`, `photos/<photo id>.jpg`, `thumbnails/<photo id>.jpg`).
+מצרכים: a personal iPhone PWA for grocery shopping. One open list, with no shopping mode: one tap on its ring takes an item and a tap on the row opens it, at home or in the shop; while anything is taken or marked לא היה, "סיום" files the trip with an optional total, receipt photos and note. Every item keeps a note, a photo, a verdict (לקנות שוב / לא לקנות שוב) and the prices recorded on trips, so the next trip starts with what the last ones taught. Hebrew, RTL, always light. Everything lives in IndexedDB on the device, with a zip backup file (`data.json`, `photos/<photo id>.jpg`, `thumbnails/<photo id>.jpg`).
 
 ## Commands
 

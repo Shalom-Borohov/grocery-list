@@ -166,7 +166,7 @@ components:
 
 **Creative North Star: "Shelf Labels"**
 
-Every item is the label on a supermarket shelf edge: a white card on a cool grey shelf, the amount to take set big in a fixed column where the price would be, and the lesson from last time on one line under the name. The system is built for a phone held in one hand in a shop aisle, so it reads in one glance down a single column of numerals, and one tap anywhere on a label takes the item.
+Every item is the label on a supermarket shelf edge: a white card on a cool grey shelf, the amount to take set big in a fixed column where the price would be, and the lesson from last time on one line under the name. The system is built for a phone held in one hand in a shop aisle, so it reads in one glance down a single column of numerals, and one tap on a label's ring takes the item.
 
 The screens are calm and standard iOS underneath: Ionic iOS navigation, back buttons, sheets and a four-tab bar stay native. The world lives in the labels, in heavy Rubik numerals, and in one sale-tag yellow that only ever marks "this is the number that matters" or "this one is done". There is no costume: no paper texture, no price-tag die-cut, no patterns or dashed lines. Hebrew RTL throughout, with numerals isolated LTR and tabular.
 
@@ -249,10 +249,10 @@ Everything is rounded; nothing is square or edge to edge. Label rows and control
 ## Components
 
 ### Label Row (signature)
-The shelf label. A white 14px card, min 60px, with a fixed amount column (numeral at 1.625rem/800, unit as a caption beneath, 1px divider on its inline-end side), then the name (body strong, one line) and one secondary line (label size): the note, or the verdict as a word ("לקנות שוב" in ink 500, "לא לקנות שוב" in warning red 500), or "לא היה" in red. An optional 40px photo and a trailing slot (tick ring, chevron, or price) follow. The whole row is the tap target.
+The shelf label. A white 14px card, min 60px, with a fixed amount column (numeral at 1.625rem/800, unit as a caption beneath, 1px divider on its inline-end side), then the name (body strong, one line) and one secondary line (label size): the note, or the verdict as a word ("לקנות שוב" in ink 500, "לא לקנות שוב" in warning red 500), or "לא היה" in red. An optional 40px photo and a trailing slot (tick ring, chevron, or price) follow. The whole row is the tap target, except on the list (below).
 - **Taken:** taken grey ground, no shadow, taken text, name struck through, tick ring filled yellow with an ink tick; it sinks below waiting rows with a single 200ms ease-out slide (12px, from 0.6 opacity), a plain swap under reduced motion.
 - **Swipe:** the row sits in an end-side swipe; every swipe action also has a tap path.
-- **On the list:** the photo leaves the tap target and becomes a square at the row's end, after the tick ring: the 40px photo, or a 40px ground tile with a 20px soft-ink camera. It opens the row's sheet; the rest of the row still takes the item. It dims with a taken row.
+- **On the list:** the row opens its sheet, and the tick ring is its own target: the 28px ring centred in a 48px-wide tap area as tall as the row, the only place that takes the item. The photo leaves the body and becomes a square at the row's end, after the ring: the 40px photo, or a 40px ground tile with a 20px soft-ink camera. It opens the row's sheet too, and dims with a taken row.
 
 ### Tick Ring
 28px circle with a 2px ink stroke; filled yellow with an ink tick when taken.

@@ -2,13 +2,13 @@ import { IonItem, IonItemOption, IonItemOptions, IonItemSliding } from '@ionic/r
 import { useRef } from 'react'
 import { LabelRow } from '../../components/LabelRow'
 import { SecondaryText } from '../../components/SecondaryText'
-import { TickRing } from '../../components/TickRing'
 import { useAction } from '../../components/useAction'
 import { removeEntry, toggleMissing, toggleTaken } from '../../data/listRepo'
 import { secondaryLine } from '../../domain/secondaryLine'
 import type { ListEntry } from '../../domain/types'
 import { LIST_COPY } from './copy'
 import { EntryPhotoButton } from './EntryPhotoButton'
+import { EntryTickButton } from './EntryTickButton'
 import type { ListRow } from './listRows'
 
 type EntryRowProps = {
@@ -45,6 +45,17 @@ export function EntryRow({ row: { entry, item }, onOpenSheet }: EntryRowProps) {
     run(action.act)
   }
 
+  const end = (
+    <>
+      <EntryTickButton
+        isTaken={isTaken}
+        label={LIST_COPY.rowTick(item.name)}
+        onTap={() => run(() => toggleTaken(entry.id, Date.now()))}
+      />
+      <EntryPhotoButton photoId={item.photoId} label={LIST_COPY.rowPhoto(item.name)} onTap={onOpenSheet} />
+    </>
+  )
+
   return (
     <IonItemSliding ref={sliding} className="entry-sliding" disabled={!canSwipe}>
       <IonItem lines="none" className="entry-item">
@@ -53,12 +64,10 @@ export function EntryRow({ row: { entry, item }, onOpenSheet }: EntryRowProps) {
           amount={entry.amount}
           secondary={line && <SecondaryText line={line} />}
           isTaken={isTaken}
-          trailing={<TickRing isTicked={isTaken} />}
-          end={<EntryPhotoButton photoId={item.photoId} label={LIST_COPY.rowPhoto(item.name)} onTap={onOpenSheet} />}
-          pressed={isTaken}
+          end={end}
           columnLabel={LIST_COPY.rowDetails(item.name)}
           onColumnTap={onOpenSheet}
-          onTap={() => run(() => toggleTaken(entry.id, Date.now()))}
+          onTap={onOpenSheet}
         />
       </IonItem>
       {canSwipe && (
