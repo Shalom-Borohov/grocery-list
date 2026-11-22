@@ -2,9 +2,10 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createItem } from '../../src/data/itemsRepo'
 import { addToList, toggleTaken } from '../../src/data/listRepo'
+import { handKeyboardTo } from '../../src/components/keyboardHold'
 import { allRecords } from '../../src/data/recordsContext'
-import { handKeyboardTo } from '../../src/pages/list/keyboardHold'
 import { resetDb } from '../helpers/db'
+import { focusedTextField } from '../helpers/keyboard'
 import { renderAt } from '../helpers/renderAt'
 
 const NOW = 1_700_000_000_000
@@ -50,13 +51,7 @@ describe('+ opens the picker ready to type', () => {
     renderAt('/tabs/list')
     fireEvent.click(await screen.findByRole('button', { name: 'הוספה' }))
 
-    const holder = document.activeElement
-
-    if (!(holder instanceof HTMLInputElement)) {
-      throw new Error('no text field took the tap')
-    }
-
-    holder.value = 'חל'
+    focusedTextField().value = 'חל'
 
     await waitFor(async () => expect(await pickerSearch()).toHaveValue('חל'))
     expect(await pickerSearch()).toHaveFocus()

@@ -1,4 +1,5 @@
-import { SUBMIT_ENTER_KEY_HINT } from '../../components/SearchField'
+import './keyboardHold.css'
+import { SUBMIT_ENTER_KEY_HINT } from './returnKey'
 
 const HOLDER_CLASS = 'keyboard-holder'
 
@@ -24,7 +25,14 @@ function keepFocusUnlessMovedOn({ relatedTarget }: FocusEvent) {
   }
 }
 
+function hideFromOverlayFocusTraps(event: FocusEvent) {
+  if (event.target === holder) {
+    event.stopImmediatePropagation()
+  }
+}
+
 function releaseHolder() {
+  window.removeEventListener('focus', hideFromOverlayFocusTraps, true)
   holder?.removeEventListener('blur', keepFocusUnlessMovedOn)
   holder?.remove()
   holder = undefined
@@ -34,6 +42,7 @@ export function holdKeyboard() {
   releaseHolder()
   holder = createHolder()
   holder.addEventListener('blur', keepFocusUnlessMovedOn)
+  window.addEventListener('focus', hideFromOverlayFocusTraps, true)
   document.body.append(holder)
   holder.focus({ preventScroll: true })
 }

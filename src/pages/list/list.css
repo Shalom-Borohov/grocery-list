@@ -169,16 +169,3 @@
 .entry-price {
   font-weight: 600;
 }
-
-.keyboard-holder {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  border: 0;
-  opacity: 0;
-  font-size: 1rem;
-  pointer-events: none;
-}
