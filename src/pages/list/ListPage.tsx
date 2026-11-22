@@ -7,6 +7,7 @@ import type { Records } from '../../domain/types'
 import { LIST_COPY } from './copy'
 import { EntryRow } from './EntryRow'
 import { FinishSheet } from './FinishSheet'
+import { holdKeyboard } from './keyboardHold'
 import { HomeHeader, ShopHeader } from './ListHeaders'
 import './list.css'
 import { listRows } from './listRows'
@@ -21,7 +22,11 @@ function ListBody({ records }: { records: Records }) {
   const counts = entryCounts(records.entries)
   const hasSomethingToFile = filesATrip(records.entries)
   const isEmpty = rows.length === 0
-  const openPicker = () => setPickerOpen(true)
+
+  const openPicker = () => {
+    holdKeyboard()
+    setPickerOpen(true)
+  }
 
   return (
     <>
