@@ -15,10 +15,12 @@ type PhotoViewerProps = {
   onClose: () => void
 }
 
-function FullPhoto({ photoId, alt }: ShownPhoto) {
+type FullPhotoProps = Pick<ShownPhoto, 'photoId' | 'alt'> & { className: string }
+
+export function FullPhoto({ photoId, alt, className }: FullPhotoProps) {
   const url = usePhotoUrl(photoId, 'photo')
 
-  return url && <img className="full-photo" src={url} alt={alt} />
+  return url && <img className={className} src={url} alt={alt} decoding="async" />
 }
 
 export function PhotoViewer({ photo, onClose }: PhotoViewerProps) {
@@ -28,7 +30,7 @@ export function PhotoViewer({ photo, onClose }: PhotoViewerProps) {
         <>
           <SheetHeader title={photo.title} end={{ text: COMMON_COPY.close, onTap: onClose }} />
           <IonContent>
-            <FullPhoto {...photo} />
+            <FullPhoto photoId={photo.photoId} alt={photo.alt} className="full-photo" />
           </IonContent>
         </>
       )}

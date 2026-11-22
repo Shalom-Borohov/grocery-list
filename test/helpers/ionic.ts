@@ -25,6 +25,16 @@ export function pageOf(element: HTMLElement) {
   return page
 }
 
+export function sheetOf(element: HTMLElement) {
+  const sheet = element.closest('ion-modal')
+
+  if (!sheet) {
+    throw new Error('not in a sheet')
+  }
+
+  return sheet
+}
+
 export function selectedTab() {
   return document.querySelector('ion-tab-button.tab-selected')?.getAttribute('tab')
 }

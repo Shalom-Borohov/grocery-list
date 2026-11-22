@@ -20,6 +20,8 @@ const CHEVRON_ICON_SIZE = 14
 
 const ACTION_ICON_SIZE = 20
 
+const PENCIL_ICON_SIZE = 15
+
 function SolidIcon({ size, viewBox = VIEW_BOX, children }: SolidIconProps) {
   return (
     <svg width={size} height={size} viewBox={viewBox} fill="currentColor" aria-hidden="true">
@@ -113,6 +115,12 @@ export const PlusIcon = () => (
 export const ChevronIcon = () => (
   <SolidIcon size={CHEVRON_ICON_SIZE} viewBox={CHEVRON_VIEW_BOX}>
     <path d="M10.4 1.2a1.6 1.6 0 0 0-2.3 0L.7 8.7a1.8 1.8 0 0 0 0 2.6l7.4 7.5a1.6 1.6 0 0 0 2.3-2.3L4 10l6.4-6.5a1.6 1.6 0 0 0 0-2.3z" />
+  </SolidIcon>
+)
+
+export const PencilIcon = () => (
+  <SolidIcon size={PENCIL_ICON_SIZE}>
+    <path d="M16.6 2.6a2.3 2.3 0 0 1 3.2 0l1.6 1.6a2.3 2.3 0 0 1 0 3.2L9.3 19.5 3 21l1.5-6.3zM5.9 16l-.6 2.7 2.7-.6z" />
   </SolidIcon>
 )
 

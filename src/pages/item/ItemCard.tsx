@@ -1,3 +1,4 @@
+import { DECORATIVE_IMAGE, ItemThumbnail } from '../../components/ItemThumbnail'
 import { AmountColumn } from '../../components/LabelRow'
 import { VerdictSwitch } from '../../components/VerdictSwitch'
 import { ViewablePhoto } from '../../components/ViewablePhoto'
@@ -42,7 +43,9 @@ export function ItemCard({ item, history, onEdit }: ItemCardProps) {
           <p className="item-facts">{itemFacts(history)}</p>
         </div>
         {item.photoId ? (
-          <ViewablePhoto photoId={item.photoId} name={item.name} className="item-photo-button" />
+          <ViewablePhoto photoId={item.photoId} name={item.name} className="item-photo-button">
+            <ItemThumbnail photoId={item.photoId} alt={DECORATIVE_IMAGE} className="photo-tile" />
+          </ViewablePhoto>
         ) : (
           <AddPhotoTile itemId={item.id} />
         )}

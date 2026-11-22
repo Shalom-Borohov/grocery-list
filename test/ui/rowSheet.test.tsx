@@ -31,10 +31,10 @@ async function openRowSheet(name: string) {
   fireEvent.click(await screen.findByRole('button', { name: `כמות ומחיר: ${name}` }))
 }
 
-async function openNamePrompt() {
+async function openNamePrompt(name: string) {
   const shown = alertShown()
 
-  fireEvent.click(await screen.findByRole('button', { name: 'עריכת שם' }))
+  fireEvent.click(await screen.findByRole('button', { name: `עריכת שם: ${name}` }))
   await shown
 }
 
@@ -45,26 +45,30 @@ async function answerNamePrompt(typed: string, button: string) {
   await dismissed
 }
 
-async function editName(typed: string, button: string) {
-  await openNamePrompt()
+async function editName(name: string, typed: string, button: string) {
+  await openNamePrompt(name)
   await answerNamePrompt(typed, button)
 }
 
 describe('the row sheet at home', () => {
   beforeEach(resetDb)
 
-  it('renames the item everywhere from "עריכת שם", starting from its current name', async () => {
+  it('renames the item everywhere from a tap on the sheet title, starting from its current name', async () => {
     const milk = await createItem('חלב', NOW)
 
     await addToList(milk, NOW)
     await openRowSheet('חלב')
 
-    await openNamePrompt()
+    expect(screen.queryByRole('button', { name: 'עריכת שם' })).not.toBeInTheDocument()
+
+    await openNamePrompt('חלב')
+    expect(alertHeader()).toBe('עריכת שם')
     expect(alertInput().value).toBe('חלב')
     await answerNamePrompt('חלב 3%', 'שינוי השם')
 
     await waitFor(async () => expect((await allRecords()).items).toMatchObject([{ id: milk, name: 'חלב 3%' }]))
     expect(await screen.findByRole('button', { name: 'כמות ומחיר: חלב 3%' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'עריכת שם: חלב 3%' })).toHaveTextContent('חלב 3%')
   })
 
   it('says the name is taken and renames nothing when another item has it', async () => {
@@ -72,7 +76,7 @@ describe('the row sheet at home', () => {
     await createItem('חלב 3%', NOW)
     await openRowSheet('חלב')
 
-    await editName('חלב 3%', 'שינוי השם')
+    await editName('חלב', 'חלב 3%', 'שינוי השם')
 
     await waitFor(() => expect(toastMessages()).toContain('כבר יש מצרך בשם הזה'))
     expect((await allRecords()).items.map((found) => found.name).sort()).toEqual(['חלב', 'חלב 3%'])
@@ -84,7 +88,7 @@ describe('the row sheet at home', () => {
     await addToList(milk, NOW)
     await openRowSheet('חלב')
 
-    await editName('חלב 3%', 'מצרך חדש')
+    await editName('חלב', 'חלב 3%', 'מצרך חדש')
 
     expect(await screen.findByRole('button', { name: 'כמות ומחיר: חלב 3%' })).toBeInTheDocument()
 
@@ -99,7 +103,7 @@ describe('the row sheet at home', () => {
     await addToList(await createItem('ביצים', NOW), NOW + 1)
     await openRowSheet('חלב')
 
-    await editName('ביצים', 'מצרך חדש')
+    await editName('חלב', 'ביצים', 'מצרך חדש')
 
     await waitFor(() => expect(toastMessages()).toContain('כבר ברשימה'))
     expect(screen.getByRole('button', { name: 'כמות ומחיר: חלב' })).toBeInTheDocument()
@@ -144,7 +148,7 @@ describe('the row sheet in the shop', () => {
     await toggleTaken(entryId, NOW + 1)
     await openRowSheet('חלב')
 
-    await editName('חלב 3%', 'מצרך חדש')
+    await editName('חלב', 'חלב 3%', 'מצרך חדש')
 
     expect(await screen.findByRole('button', { name: 'כמות ומחיר: חלב 3%' })).toBeInTheDocument()
     expect((await allRecords()).entries).toMatchObject([{ id: entryId, state: 'taken', takenAt: NOW + 1 }])

@@ -4,6 +4,7 @@ import { AmountField } from '../../components/AmountField'
 import { NoteField } from '../../components/NoteField'
 import { PhotoSection } from '../../components/PhotoSection'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetPhoto } from '../../components/SheetPhoto'
 import { TextField } from '../../components/TextField'
 import { useAction } from '../../components/useAction'
 import { COMMON_COPY } from '../../copy/common'
@@ -46,6 +47,7 @@ function EditItemForm({ item, onClose }: Omit<EditItemSheetProps, 'isOpen'>) {
       />
       <IonContent>
         <div className="sheet-body">
+          <SheetPhoto item={item} />
           <TextField
             label={ITEM_COPY.name}
             defaultValue={item.name}
