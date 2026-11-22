@@ -8,6 +8,10 @@ const DECIMAL_POINT = '.'
 
 const MAXIMUM_PRICE = 100_000
 
+const AGOROT_IN_SHEKEL = 100
+
+export const toAgorot = (amount: number) => Math.round(amount * AGOROT_IN_SHEKEL) / AGOROT_IN_SHEKEL
+
 export const INVALID_PRICE = 'invalid'
 
 type ParsedPrice = number | undefined | typeof INVALID_PRICE

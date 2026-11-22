@@ -50,7 +50,12 @@ function ListBody({ records }: { records: Records }) {
         modalProps={rowSheet.modalProps}
         onClose={rowSheet.close}
       />
-      <FinishSheet isOpen={isFinishOpen} counts={counts} onClose={() => setFinishOpen(false)} />
+      <FinishSheet
+        isOpen={isFinishOpen}
+        counts={counts}
+        entries={records.entries}
+        onClose={() => setFinishOpen(false)}
+      />
       <AddPicker isOpen={isPickerOpen} onDismiss={() => setPickerOpen(false)} />
     </>
   )

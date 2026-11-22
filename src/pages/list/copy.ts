@@ -22,6 +22,7 @@ export const LIST_COPY = {
   finishTitle: 'סיום הקנייה',
   finishCounts: (taken: number, missing: number) =>
     joinParts([taken > 0 ? `נלקחו ${taken}` : undefined, missing > 0 ? `${COMMON_COPY.missing} ${missing}` : undefined]),
+  pricedShare: (priced: number, taken: number) => `לפי המחירים של ${priced} מתוך ${taken} מצרכים`,
   removeReceipt: (number: number) => `הסרת קבלה ${number}`,
   tripSaved: 'הקנייה נשמרה',
 } as const

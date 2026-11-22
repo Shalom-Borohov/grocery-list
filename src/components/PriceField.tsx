@@ -7,6 +7,7 @@ type PriceFieldProps = {
   label: string
   price: number | undefined
   hint?: number
+  description?: string
   onChange: (price: number | undefined) => void
   onValidityChange?: (isValid: boolean) => void
 }
@@ -23,10 +24,15 @@ function priceText(price: number | undefined) {
   return Number.isInteger(price) ? String(price) : price.toFixed(AGOROT_DIGITS)
 }
 
-export function PriceField({ label, price, hint, onChange, onValidityChange }: PriceFieldProps) {
+export function PriceField({ label, price, hint, description, onChange, onValidityChange }: PriceFieldProps) {
   const [text, setText] = useState(() => priceText(price))
   const [isInvalid, setInvalid] = useState(false)
   const messageId = useId()
+  const descriptionId = useId()
+
+  const describedBy = [isInvalid && messageId, description && descriptionId]
+    .filter((id) => typeof id === 'string')
+    .join(' ')
 
   function change(typed: string) {
     setText(typed)
@@ -55,7 +61,7 @@ export function PriceField({ label, price, hint, onChange, onValidityChange }: P
             value={text}
             placeholder={hint === undefined ? undefined : priceText(hint)}
             aria-invalid={isInvalid}
-            aria-describedby={isInvalid ? messageId : undefined}
+            aria-describedby={describedBy || undefined}
             onChange={(event) => change(event.target.value)}
           />
         </span>
@@ -63,6 +69,11 @@ export function PriceField({ label, price, hint, onChange, onValidityChange }: P
       {isInvalid && (
         <span id={messageId} className="field-error">
           {COMMON_COPY.invalidPrice}
+        </span>
+      )}
+      {description && (
+        <span id={descriptionId} className="quiet-text price-field-description">
+          {description}
         </span>
       )}
       {hint !== undefined && text === NO_PRICE_TEXT && (
