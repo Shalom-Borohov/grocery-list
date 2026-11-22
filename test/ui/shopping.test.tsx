@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '../../src/data/db'
 import { createItem, updateItem } from '../../src/data/itemsRepo'
@@ -6,7 +6,7 @@ import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/da
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
 import { swipeOption } from '../helpers/ionic'
-import { amount, line, trip } from '../helpers/records'
+import { amount, line, packOf, trip } from '../helpers/records'
 import { renderAt } from '../helpers/renderAt'
 
 const NOW = 1_700_000_000_000
@@ -120,6 +120,35 @@ describe('shopping from the list', () => {
     await waitFor(async () => expect((await entryOf(milk)).state).toBe('missing'))
     expect(await screen.findByRole('button', { name: 'היה בכל זאת' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'נשארו 1' })).toBeInTheDocument()
+  })
+
+  it('makes the amount a pack from the sheet and sets how many are in it, between 2 and 99', async () => {
+    const [soap] = await shopWith(['סבון מוצק'])
+
+    renderAt('/tabs/list')
+    fireEvent.click(await screen.findByRole('button', { name: 'כמות ומחיר: סבון מוצק' }))
+    expect(await screen.findByRole('button', { name: 'אריזה', pressed: false })).toBeVisible()
+    expect(screen.queryByRole('group', { name: 'כמה באריזה' })).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'אריזה' }))
+
+    await waitFor(async () => expect((await entryOf(soap)).amount).toEqual(packOf(1, 2)))
+
+    const packSizeGroup = await screen.findByRole('group', { name: 'כמה באריזה' })
+
+    expect(within(packSizeGroup).getByRole('button', { name: 'פחות באריזה' })).toBeDisabled()
+    fireEvent.click(within(packSizeGroup).getByRole('button', { name: 'יותר באריזה' }))
+
+    await waitFor(async () => expect((await entryOf(soap)).amount).toEqual(packOf(1, 3)))
+    expect(await within(packSizeGroup).findByText('3')).toBeVisible()
+
+    await updateEntry((await entryOf(soap)).id, { amount: packOf(1, 99) })
+    await waitFor(() => expect(within(packSizeGroup).getByRole('button', { name: 'יותר באריזה' })).toBeDisabled())
+
+    fireEvent.click(screen.getByRole('button', { name: 'ק״ג' }))
+
+    await waitFor(async () => expect((await entryOf(soap)).amount).toEqual(amount(1, 'kilogram')))
+    await waitFor(() => expect(screen.queryByRole('group', { name: 'כמה באריזה' })).not.toBeInTheDocument())
   })
 
   it('offers the last recorded price as a hint and saves only a typed price', async () => {

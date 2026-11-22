@@ -1,10 +1,21 @@
-import type { Amount, Item, ListEntry, SavedSet, Trip, TripLine } from '../../src/domain/types'
+import type {
+  Amount,
+  Item,
+  ListEntry,
+  MeasuredUnit,
+  PackAmount,
+  SavedSet,
+  Trip,
+  TripLine,
+} from '../../src/domain/types'
 
 export const CREATED_AT = 1_700_000_000_000
 
 export const ONE_UNIT: Amount = { quantity: 1, unit: 'unit' }
 
-export const amount = (quantity: number, unit: Amount['unit'] = 'unit'): Amount => ({ quantity, unit })
+export const amount = (quantity: number, unit: MeasuredUnit = 'unit'): Amount => ({ quantity, unit })
+
+export const packOf = (quantity: number, packSize: number): PackAmount => ({ quantity, unit: 'pack', packSize })
 
 export const item = (fields: Partial<Item> & Pick<Item, 'id' | 'name'>): Item => ({
   createdAt: CREATED_AT,

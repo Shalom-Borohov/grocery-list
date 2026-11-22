@@ -10,7 +10,7 @@ import { seedSet } from '../helpers/seed'
 import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { shrunkPhoto, stubObjectUrls } from '../helpers/photo'
-import { amount, item } from '../helpers/records'
+import { amount, item, packOf } from '../helpers/records'
 
 const NOW = new Date(2026, 10, 17, 10, 0).getTime()
 
@@ -64,6 +64,25 @@ describe('backup', () => {
     await restoreBackup(parseBackup(archive))
 
     expect(await snapshotWithPhotos()).toEqual(before)
+  })
+
+  it('keeps packs, with how many are in each, through a round trip', async () => {
+    const soap = await createItem('סבון מוצק', NOW)
+
+    await toggleTaken(await addToList(soap, NOW, packOf(2, 4)), NOW)
+    await finishShopping({ receipts: [] }, NOW + 1)
+    await addToList(soap, NOW + 2)
+    await seedSet('ניקיון', [soap], NOW)
+    const before = await allRecords()
+    const archive = await exportedArchive()
+
+    await resetDb()
+    await restoreBackup(parseBackup(archive))
+
+    const after = await allRecords()
+
+    expect(after).toEqual(before)
+    expect(after.entries[0].amount).toEqual(packOf(2, 4))
   })
 
   it('restores a backup made while the app still had shopping mode', async () => {

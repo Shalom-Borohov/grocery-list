@@ -11,7 +11,7 @@ import {
 } from '../../src/data/listRepo'
 import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
-import { amount } from '../helpers/records'
+import { amount, packOf } from '../helpers/records'
 
 const NOW = 1_700_000_000_000
 
@@ -74,6 +74,18 @@ describe('the list', () => {
 
     await removeEntry(entryId)
     expect((await allRecords()).entries).toEqual([])
+  })
+
+  it('keeps a pack with how many are in it, and refuses part of a pack or a pack of fewer than 2 or more than 99', async () => {
+    const entryId = await addToList(await createItem('סבון מוצק', NOW), NOW)
+
+    await updateEntry(entryId, { amount: packOf(1, 4) })
+    expect((await allRecords()).entries[0].amount).toEqual(packOf(1, 4))
+
+    await expect(updateEntry(entryId, { amount: packOf(1, 1) })).rejects.toThrow()
+    await expect(updateEntry(entryId, { amount: packOf(1, 100) })).rejects.toThrow()
+    await expect(updateEntry(entryId, { amount: packOf(1, 2.5) })).rejects.toThrow()
+    await expect(updateEntry(entryId, { amount: packOf(1.5, 4) })).rejects.toThrow()
   })
 })
 

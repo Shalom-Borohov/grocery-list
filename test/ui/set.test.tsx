@@ -14,7 +14,7 @@ import {
   modalDismissed,
   toastMessages,
 } from '../helpers/overlays'
-import { amount, CREATED_AT } from '../helpers/records'
+import { amount, CREATED_AT, packOf } from '../helpers/records'
 import { currentPath, renderAt } from '../helpers/renderAt'
 import { seedItem, seedSet } from '../helpers/seed'
 
@@ -56,6 +56,18 @@ describe('set page', () => {
 
     expect(await screen.findByRole('heading', { name: 'בסיס' })).toBeVisible()
     expect((await setRows()).map((row) => row.textContent)).toEqual(['12ביצים', '2ליטרחלב'])
+  })
+
+  it('reads a pack in the set as packs of a size, not as a multiplication', async () => {
+    const soapId = await seedItem('סבון מוצק', { usualAmount: packOf(2, 4) })
+    const setId = await seedSet('ניקיון', [soapId], CREATED_AT)
+
+    renderAt(`/tabs/items/sets/${setId}`)
+
+    const [soapRow] = await within(await screen.findByRole('list', { name: 'ניקיון' })).findAllByRole('listitem')
+
+    expect(within(soapRow).getByText('2 אריזות של 4')).toHaveClass('visually-hidden')
+    expect(within(soapRow).getByText('אריזה ×4')).toHaveAttribute('aria-hidden', 'true')
   })
 
   it('renames the set, and keeps the name when the new one is blank', async () => {

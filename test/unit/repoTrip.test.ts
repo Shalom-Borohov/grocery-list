@@ -5,7 +5,7 @@ import { allRecords } from '../../src/data/recordsContext'
 import { deleteTrip, finishShopping, updateTrip } from '../../src/data/tripsRepo'
 import { storedPhotoBytes } from '../../src/data/photosRepo'
 import { resetDb } from '../helpers/db'
-import { amount } from '../helpers/records'
+import { amount, packOf } from '../helpers/records'
 import { shrunkPhoto } from '../helpers/photo'
 
 const NOW = 1_700_000_000_000
@@ -69,6 +69,20 @@ describe('a shopping trip', () => {
     await addToList(milkId, NOW + 2)
 
     expect((await allRecords()).entries[0].amount).toEqual(amount(2, 'liter'))
+  })
+
+  it('remembers a pack with how many were in it, on the trip and for next time', async () => {
+    const soapId = await createItem('סבון מוצק', NOW)
+    const entryId = await addToList(soapId, NOW, packOf(1, 4))
+
+    await toggleTaken(entryId, NOW)
+    await finishShopping({ receipts: [] }, NOW + 1)
+    await addToList(soapId, NOW + 2)
+
+    const { trips, entries } = await allRecords()
+
+    expect(trips[0].lines[0].amount).toEqual(packOf(1, 4))
+    expect(entries[0].amount).toEqual(packOf(1, 4))
   })
 
   it('files nothing when nothing was taken or marked missing', async () => {
