@@ -17,6 +17,10 @@
   margin-top: calc(var(--app-stack-gap) - var(--price-label-gap));
 }
 
+.price-field-description {
+  padding: 0 6px;
+}
+
 .price-field-box {
   position: relative;
   display: block;

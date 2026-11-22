@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem } from '../../src/data/itemsRepo'
-import { addToList, toggleMissing, toggleTaken } from '../../src/data/listRepo'
+import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
 import { modalDismissed, toastMessages } from '../helpers/overlays'
@@ -96,6 +96,75 @@ describe('finishing a trip', () => {
 
     await waitFor(async () => expect((await allRecords()).trips).toHaveLength(1))
     expect((await allRecords()).trips[0]).toMatchObject({ total: undefined, note: undefined, receiptPhotoIds: [] })
+  })
+
+  it('opens with the total of the taken rows\' prices filled in, and files it', async () => {
+    const milk = await addToList(await createItem('חלב', NOW), NOW, { quantity: 2, unit: 'unit' })
+    const cheese = await addToList(await createItem('גבינה', NOW), NOW + 1, { quantity: 200, unit: 'gram' })
+
+    await updateEntry(milk, { price: 6.9 })
+    await updateEntry(cheese, { price: 12.9 })
+    await toggleTaken(milk, NOW)
+    await toggleTaken(cheese, NOW)
+    await openFinishSheet()
+
+    expect(screen.getByRole('textbox', { name: 'סכום' })).toHaveValue('26.70')
+    expect(screen.queryByText(/לפי המחירים/)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'שמירה' }))
+
+    await waitFor(async () => expect((await allRecords()).trips).toHaveLength(1))
+    expect((await allRecords()).trips[0].total).toBe(26.7)
+  })
+
+  it('says how many taken rows the filled-in total covers, until the owner types their own', async () => {
+    await shopTakingMilkWithoutCoffee()
+
+    const bread = await addToList(await createItem('לחם', NOW), NOW + 3)
+
+    await updateEntry(bread, { price: 12.5 })
+    await toggleTaken(bread, NOW)
+    await openFinishSheet()
+
+    const total = screen.getByRole('textbox', { name: 'סכום' })
+
+    expect(total).toHaveValue('12.50')
+    expect(screen.getByText('לפי המחירים של 1 מתוך 2 מצרכים')).toBeVisible()
+    expect(total).toHaveAccessibleDescription('לפי המחירים של 1 מתוך 2 מצרכים')
+
+    fireEvent.change(total, { target: { value: '31' } })
+
+    expect(screen.queryByText('לפי המחירים של 1 מתוך 2 מצרכים')).not.toBeInTheDocument()
+  })
+
+  it('drops the filled-in total\'s line while the total is not a price', async () => {
+    await shopTakingMilkWithoutCoffee()
+
+    const bread = await addToList(await createItem('לחם', NOW), NOW + 3)
+
+    await updateEntry(bread, { price: 12.5 })
+    await toggleTaken(bread, NOW)
+    await openFinishSheet()
+    fireEvent.change(screen.getByRole('textbox', { name: 'סכום' }), { target: { value: '12.50x' } })
+
+    expect(screen.queryByText('לפי המחירים של 1 מתוך 2 מצרכים')).not.toBeInTheDocument()
+  })
+
+  it('adds up the prices again each time it opens', async () => {
+    const milk = await addToList(await createItem('חלב', NOW), NOW)
+
+    await toggleTaken(milk, NOW)
+    await openFinishSheet()
+    expect(screen.getByRole('textbox', { name: 'סכום' })).toHaveValue('')
+
+    const dismissed = modalDismissed()
+
+    fireEvent.click(screen.getByRole('button', { name: 'ביטול' }))
+    await dismissed
+    await updateEntry(milk, { price: 6.9 })
+    fireEvent.click(await screen.findByRole('button', { name: 'סיום' }))
+
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'סכום' })).toHaveValue('6.90'))
   })
 
   it('removes a receipt photo before saving', async () => {
