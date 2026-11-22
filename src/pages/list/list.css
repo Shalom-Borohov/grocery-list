@@ -166,6 +166,10 @@
   line-height: 1.4;
 }
 
+.entry-price {
+  font-weight: 600;
+}
+
 .keyboard-holder {
   position: fixed;
   inset-block-start: 0;

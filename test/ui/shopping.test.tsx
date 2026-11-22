@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '../../src/data/db'
 import { createItem, updateItem } from '../../src/data/itemsRepo'
-import { addToList, toggleMissing, toggleTaken } from '../../src/data/listRepo'
+import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
 import { swipeOption } from '../helpers/ionic'
@@ -140,6 +140,24 @@ describe('shopping from the list', () => {
     fireEvent.change(priceInput, { target: { value: '7.5' } })
 
     await waitFor(async () => expect((await entryOf(milk)).price).toBe(7.5))
+  })
+
+  it('shows the price typed on a row under its name, before its verdict, but not on a row the shop did not have', async () => {
+    const [milk, eggs, bread] = await shopWith(['חלב', 'ביצים', 'לחם', 'קפה'])
+
+    await updateItem(milk, { verdict: 'again' })
+    await updateEntry((await entryOf(milk)).id, { price: 9.9 })
+    await updateEntry((await entryOf(eggs)).id, { price: 15 })
+    await toggleTaken((await entryOf(eggs)).id, NOW)
+    await updateEntry((await entryOf(bread)).id, { price: 7 })
+    await toggleMissing((await entryOf(bread)).id)
+
+    renderAt('/tabs/list')
+
+    expect(await screen.findByRole('button', { name: 'חלב' })).toHaveAccessibleDescription('₪9.90 · לקנות שוב')
+    expect(rowBody('ביצים')).toHaveAccessibleDescription('₪15')
+    expect(rowBody('לחם')).toHaveAccessibleDescription('לא היה')
+    expect(rowBody('קפה')).toHaveAccessibleDescription('')
   })
 
   it('confirms last time\'s price with one tap', async () => {

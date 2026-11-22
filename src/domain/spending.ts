@@ -1,4 +1,5 @@
 import { dayDateOf, dayMonth, dayYear } from './dayDate'
+import { toAgorot } from './price'
 import type { Trip } from './types'
 
 export const PERIODS = ['month', 'year'] as const
@@ -12,10 +13,6 @@ export type PeriodSpending = {
   withoutTotal: number
   tripIds: string[]
 }
-
-const AGOROT_IN_SHEKEL = 100
-
-const toAgorot = (amount: number) => Math.round(amount * AGOROT_IN_SHEKEL) / AGOROT_IN_SHEKEL
 
 const tripDay = (trip: Trip) => dayDateOf(trip.finishedAt)
 
