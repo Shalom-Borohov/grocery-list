@@ -4,6 +4,7 @@ import { AmountField } from '../../components/AmountField'
 import { PhotoSection } from '../../components/PhotoSection'
 import { PriceField } from '../../components/PriceField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetPhoto } from '../../components/SheetPhoto'
 import { useAction } from '../../components/useAction'
 import { VerdictSwitch } from '../../components/VerdictSwitch'
 import { COMMON_COPY } from '../../copy/common'
@@ -15,14 +16,16 @@ import { itemPath } from '../../navigation/paths'
 import { LIST_COPY } from './copy'
 import type { ListRow } from './listRows'
 import { useEditRowName } from './useEditRowName'
+import type { SheetModalProps } from './useRowSheet'
 
 type RowSheetProps = {
   row: ListRow | undefined
   trips: Trip[]
+  modalProps: SheetModalProps
   onClose: () => void
 }
 
-type RowSheetContentProps = Omit<RowSheetProps, 'row'> & { row: ListRow }
+type RowSheetContentProps = Pick<RowSheetProps, 'trips' | 'onClose'> & { row: ListRow }
 
 function RowSheetContent({ row: { entry, item }, trips, onClose }: RowSheetContentProps) {
   const router = useIonRouter()
@@ -36,9 +39,14 @@ function RowSheetContent({ row: { entry, item }, trips, onClose }: RowSheetConte
 
   return (
     <>
-      <SheetHeader title={item.name} end={{ text: COMMON_COPY.close, onTap: onClose }} />
+      <SheetHeader
+        title={item.name}
+        titleEdit={{ label: LIST_COPY.editNameOf(item.name), onTap: () => editName({ entry, item }) }}
+        end={{ text: COMMON_COPY.close, onTap: onClose }}
+      />
       <IonContent>
         <div className="sheet-body">
+          <SheetPhoto item={item} />
           <AmountField
             label={COMMON_COPY.amount}
             amount={entry.amount}
@@ -64,9 +72,6 @@ function RowSheetContent({ row: { entry, item }, trips, onClose }: RowSheetConte
           />
           <PhotoSection item={item} />
           <div className="list-sheet-actions">
-            <button type="button" className="quiet-button" onClick={() => editName({ entry, item })}>
-              {LIST_COPY.editName}
-            </button>
             <button type="button" className="quiet-button" onClick={() => run(() => toggleMissing(entry.id))}>
               {LIST_COPY.missingToggle(entry.state === 'missing')}
             </button>
@@ -89,16 +94,16 @@ const SHEET_HEIGHT = 0.9
 
 const SHEET_BREAKPOINTS = [CLOSED_BREAKPOINT, SHEET_HEIGHT]
 
-export function RowSheet({ row, ...rest }: RowSheetProps) {
+export function RowSheet({ row, trips, modalProps, onClose }: RowSheetProps) {
   return (
     <IonModal
-      isOpen={row !== undefined}
+      {...modalProps}
+      isOpen={modalProps.isOpen && row !== undefined}
       breakpoints={SHEET_BREAKPOINTS}
       initialBreakpoint={SHEET_HEIGHT}
       expandToScroll={false}
-      onDidDismiss={rest.onClose}
     >
-      {row && <RowSheetContent row={row} {...rest} />}
+      {row && <RowSheetContent row={row} trips={trips} onClose={onClose} />}
     </IonModal>
   )
 }

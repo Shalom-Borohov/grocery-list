@@ -81,7 +81,7 @@ describe('the row sheet edits the item', () => {
 
     const shown = alertShown()
 
-    fireEvent.click(screen.getByRole('button', { name: 'עריכת שם' }))
+    fireEvent.click(screen.getByRole('button', { name: 'עריכת שם: חלב' }))
     await shown
 
     const dismissed = alertDismissed()

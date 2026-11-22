@@ -6,14 +6,8 @@
   gap: var(--photo-label-gap);
 }
 
-.photo-section-thumbnail ~ .photo-inputs,
 .photo-inputs + .photo-section-remove {
   margin-top: calc(var(--app-stack-gap) - var(--photo-label-gap));
-}
-
-.photo-section-thumbnail {
-  align-self: flex-start;
-  border-radius: var(--app-radius-control);
 }
 
 .photo-section-remove {
