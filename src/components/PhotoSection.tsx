@@ -5,7 +5,6 @@ import { PhotoInputs } from './PhotoInputs'
 import './PhotoSection.css'
 import { useConfirmDelete } from './useConfirmDelete'
 import { usePhotoPick } from './usePhotoPick'
-import { ViewablePhoto } from './ViewablePhoto'
 
 export function PhotoSection({ item }: { item: Item }) {
   const confirmDelete = useConfirmDelete()
@@ -21,7 +20,6 @@ export function PhotoSection({ item }: { item: Item }) {
   return (
     <section className="photo-section">
       <span className="field-label">{COMMON_COPY.photo}</span>
-      {item.photoId && <ViewablePhoto photoId={item.photoId} name={item.name} className="photo-section-thumbnail" />}
       <PhotoInputs cameraLabel={COMMON_COPY.takePhoto} libraryLabel={COMMON_COPY.choosePhoto} onPick={pick} />
       {item.photoId && (
         <button type="button" className="danger-button photo-section-remove" onClick={removePhoto}>

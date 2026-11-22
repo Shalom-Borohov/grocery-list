@@ -12,10 +12,11 @@ import './list.css'
 import { listRows } from './listRows'
 import { AddPicker } from './picker/AddPicker'
 import { RowSheet } from './RowSheet'
+import { useRowSheet } from './useRowSheet'
 
 function ListBody({ records }: { records: Records }) {
   const [isPickerOpen, setPickerOpen] = useState(false)
-  const [sheetEntryId, setSheetEntryId] = useState<string>()
+  const rowSheet = useRowSheet()
   const [isFinishOpen, setFinishOpen] = useState(false)
   const rows = listRows(records.items, records.entries)
   const counts = entryCounts(records.entries)
@@ -37,16 +38,17 @@ function ListBody({ records }: { records: Records }) {
           <ul className="label-list">
             {rows.map((row) => (
               <li key={row.entry.id}>
-                <EntryRow row={row} onOpenSheet={() => setSheetEntryId(row.entry.id)} />
+                <EntryRow row={row} onOpenSheet={() => rowSheet.open(row.entry.id)} />
               </li>
             ))}
           </ul>
         )}
       </div>
       <RowSheet
-        row={rows.find(({ entry }) => entry.id === sheetEntryId)}
+        row={rows.find(({ entry }) => entry.id === rowSheet.entryId)}
         trips={records.trips}
-        onClose={() => setSheetEntryId(undefined)}
+        modalProps={rowSheet.modalProps}
+        onClose={rowSheet.close}
       />
       <FinishSheet isOpen={isFinishOpen} counts={counts} onClose={() => setFinishOpen(false)} />
       <AddPicker isOpen={isPickerOpen} onDismiss={() => setPickerOpen(false)} />

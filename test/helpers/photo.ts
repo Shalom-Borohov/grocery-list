@@ -13,9 +13,9 @@ const ORIGINAL_CREATE = URL.createObjectURL
 
 const ORIGINAL_REVOKE = URL.revokeObjectURL
 
-export function stubObjectUrls() {
+export function stubObjectUrls(createUrl: (blob: Blob) => string = () => PHOTO_URL) {
   beforeEach(() => {
-    URL.createObjectURL = () => PHOTO_URL
+    URL.createObjectURL = createUrl
     URL.revokeObjectURL = () => {}
   })
 

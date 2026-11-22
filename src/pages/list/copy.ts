@@ -1,6 +1,8 @@
 import { COMMON_COPY } from '../../copy/common'
 import { joinParts } from '../../copy/joinParts'
 
+const EDIT_NAME = 'עריכת שם'
+
 export const LIST_COPY = {
   title: COMMON_COPY.list,
   rowDetails: (name: string) => `כמות ומחיר: ${name}`,
@@ -14,7 +16,8 @@ export const LIST_COPY = {
   remove: 'הסרה',
   missingToggle: (isMissing: boolean) => (isMissing ? 'היה בכל זאת' : COMMON_COPY.missing),
   removeFromList: 'הסרה מהרשימה',
-  editName: 'עריכת שם',
+  editName: EDIT_NAME,
+  editNameOf: (name: string) => `${EDIT_NAME}: ${name}`,
   rename: 'שינוי השם',
   finishTitle: 'סיום הקנייה',
   finishCounts: (taken: number, missing: number) =>

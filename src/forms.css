@@ -5,6 +5,26 @@
   padding: 16px var(--app-gutter) calc(16px + env(safe-area-inset-bottom));
 }
 
+.sheet-title-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: var(--app-tap);
+}
+
+.sheet-title-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet-title-button svg {
+  flex: none;
+  color: var(--app-ink-soft);
+}
+
 .sheet-action {
   min-width: var(--app-tap);
   min-height: var(--app-tap);

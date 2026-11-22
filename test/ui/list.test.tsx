@@ -4,7 +4,7 @@ import { createItem, setItemPhoto, updateItem } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
-import { expectElementsInOrder, swipeOption } from '../helpers/ionic'
+import { expectElementsInOrder, sheetOf, swipeOption } from '../helpers/ionic'
 import { modalDismissed } from '../helpers/overlays'
 import { fakeShrunkPhoto, PHOTO_URL, stubObjectUrls } from '../helpers/photo'
 import { amount } from '../helpers/records'
@@ -13,6 +13,18 @@ import { currentPath, renderAt } from '../helpers/renderAt'
 const NOW = 1_700_000_000_000
 
 stubObjectUrls()
+
+const openSheetTitle = () => document.querySelector('ion-modal.show-modal ion-title')
+
+async function openMilkSheetBesideEggs() {
+  await addToList(await createItem('חלב', NOW), NOW)
+  await addToList(await createItem('ביצים', NOW), NOW + 1)
+
+  renderAt('/tabs/list')
+  fireEvent.click(await screen.findByRole('button', { name: 'חלב' }))
+
+  return screen.findByRole('button', { name: 'הסרה מהרשימה' })
+}
 
 describe('the list', () => {
   beforeEach(resetDb)
@@ -147,6 +159,33 @@ describe('the list', () => {
 
     expect(await screen.findByRole('button', { name: 'הסרה מהרשימה' })).toBeInTheDocument()
     expect((await allRecords()).entries[0]?.state).toBe(state)
+  })
+
+  it.each(['חלב', 'ביצים'])(
+    'opens %s when its row is tapped while the sheet is still sliding down after a swipe',
+    async (tapped) => {
+      const sheet = sheetOf(await openMilkSheetBesideEggs())
+      const dismissed = modalDismissed()
+
+      sheet.dispatchEvent(new CustomEvent('ionDragEnd', { detail: { isDismissing: true } }))
+      fireEvent.click(screen.getByRole('button', { name: tapped }))
+      await sheet.dismiss(undefined, 'gesture')
+      await dismissed
+
+      await waitFor(() => expect(openSheetTitle()).toHaveTextContent(tapped))
+    },
+  )
+
+  it.each(['חלב', 'ביצים'])('opens %s when its row is tapped while the sheet is closing after "סגירה"', async (tapped) => {
+    await openMilkSheetBesideEggs()
+
+    const dismissed = modalDismissed()
+
+    fireEvent.click(screen.getByRole('button', { name: 'סגירה' }))
+    fireEvent.click(screen.getByRole('button', { name: tapped }))
+    await dismissed
+
+    await waitFor(() => expect(openSheetTitle()).toHaveTextContent(tapped))
   })
 
   it('goes from the row sheet to the item page in the list stack', async () => {
