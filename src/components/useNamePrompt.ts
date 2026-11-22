@@ -1,6 +1,10 @@
 import { useIonAlert } from '@ionic/react'
+import { useRef } from 'react'
 import { COMMON_COPY } from '../copy/common'
 import { isName } from '../domain/types'
+import { holdKeyboard } from './keyboardHold'
+import { NAME_PROMPT_CONFIRM_CLASS, putNameKeyboardAway, readyNameField } from './namePromptKeyboard'
+import { SUBMIT_ENTER_KEY_HINT } from './returnKey'
 import { useAction } from './useAction'
 
 const NAME_INPUT = 'name'
@@ -23,6 +27,7 @@ const isNameInput = (values: unknown): values is { [NAME_INPUT]: string } =>
 export function useNamePrompt() {
   const [presentAlert] = useIonAlert()
   const run = useAction()
+  const isPromptOpen = useRef(false)
 
   const saveButton = (text: string, save: SaveName, onSaved?: () => void) => ({
     text,
@@ -35,7 +40,13 @@ export function useNamePrompt() {
     },
   })
 
-  return ({ header, placeholder, confirmText, currentName, save, alternative, onSaved }: NamePrompt) =>
+  return ({ header, placeholder, confirmText, currentName, save, alternative, onSaved }: NamePrompt) => {
+    if (isPromptOpen.current) {
+      return
+    }
+
+    isPromptOpen.current = true
+    holdKeyboard()
     void presentAlert({
       header,
       inputs: [
@@ -44,13 +55,19 @@ export function useNamePrompt() {
           type: 'text',
           value: currentName,
           placeholder,
-          attributes: { 'aria-label': placeholder, dir: 'auto' },
+          attributes: { 'aria-label': placeholder, dir: 'auto', enterkeyhint: SUBMIT_ENTER_KEY_HINT },
         },
       ],
       buttons: [
         { text: COMMON_COPY.cancel, role: 'cancel' },
-        saveButton(confirmText, save, onSaved),
+        { ...saveButton(confirmText, save, onSaved), cssClass: NAME_PROMPT_CONFIRM_CLASS },
         ...(alternative ? [saveButton(alternative.text, alternative.save, onSaved)] : []),
       ],
+      onDidPresent: ({ target }) => readyNameField(target),
+      onWillDismiss: ({ target }) => putNameKeyboardAway(target),
+      onDidDismiss: () => {
+        isPromptOpen.current = false
+      },
     })
+  }
 }

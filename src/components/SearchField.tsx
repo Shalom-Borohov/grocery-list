@@ -1,5 +1,6 @@
 import type { KeyboardEvent, Ref } from 'react'
 import { SearchIcon } from './icons'
+import { isSubmittingReturn, SUBMIT_ENTER_KEY_HINT } from './returnKey'
 import './SearchField.css'
 
 type SearchFieldProps = {
@@ -10,16 +11,9 @@ type SearchFieldProps = {
   ref?: Ref<HTMLInputElement>
 }
 
-const COMPOSITION_KEY_CODE = 229
-
-export const SUBMIT_ENTER_KEY_HINT = 'go'
-
-const isComposing = ({ nativeEvent }: KeyboardEvent<HTMLInputElement>) =>
-  nativeEvent.isComposing || nativeEvent.keyCode === COMPOSITION_KEY_CODE
-
 export function SearchField({ query, placeholder, onQueryChange, onSubmit, ref }: SearchFieldProps) {
   function submitOnEnter(event: KeyboardEvent<HTMLInputElement>) {
-    if (!onSubmit || event.key !== 'Enter' || isComposing(event)) {
+    if (!onSubmit || !isSubmittingReturn(event.nativeEvent)) {
       return
     }
 

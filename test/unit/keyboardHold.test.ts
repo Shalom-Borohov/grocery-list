@@ -1,15 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest'
-import { handKeyboardTo, holdKeyboard } from '../../src/pages/list/keyboardHold'
-
-function focusedField() {
-  const focused = document.activeElement
-
-  if (!(focused instanceof HTMLInputElement)) {
-    throw new Error('no text field has focus')
-  }
-
-  return focused
-}
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { handKeyboardTo, holdKeyboard } from '../../src/components/keyboardHold'
+import { focusedTextField } from '../helpers/keyboard'
 
 describe('holding the keyboard while the picker opens', () => {
   afterEach(() => {
@@ -20,7 +11,7 @@ describe('holding the keyboard while the picker opens', () => {
   it('focuses a field hidden from VoiceOver during the tap itself', () => {
     holdKeyboard()
 
-    const holder = focusedField()
+    const holder = focusedTextField()
 
     expect(holder).toHaveAttribute('aria-hidden', 'true')
     expect(holder).toHaveAttribute('tabindex', '-1')
@@ -31,7 +22,7 @@ describe('holding the keyboard while the picker opens', () => {
   it('takes focus back when something blurs it without focusing anything else', () => {
     holdKeyboard()
 
-    const holder = focusedField()
+    const holder = focusedTextField()
 
     holder.blur()
 
@@ -66,7 +57,7 @@ describe('holding the keyboard while the picker opens', () => {
 
     document.body.append(searchField)
     holdKeyboard()
-    focusedField().value = 'חל'
+    focusedTextField().value = 'חל'
 
     expect(handKeyboardTo(searchField)).toBe('חל')
   })
@@ -77,5 +68,47 @@ describe('holding the keyboard while the picker opens', () => {
 
     expect(document.body).toHaveFocus()
     expect(document.body.children).toHaveLength(0)
+  })
+})
+
+describe('holding the keyboard while an open sheet traps focus', () => {
+  const sheetButton = document.createElement('button')
+
+  function trapFocusInSheet({ target }: FocusEvent) {
+    if (target !== sheetButton) {
+      sheetButton.focus()
+    }
+  }
+
+  beforeEach(() => {
+    document.body.append(sheetButton)
+    document.addEventListener('focus', trapFocusInSheet, true)
+  })
+
+  afterEach(() => {
+    document.removeEventListener('focus', trapFocusInSheet, true)
+    handKeyboardTo(null)
+    document.body.replaceChildren()
+  })
+
+  it('keeps the hidden field focused through the tap and an overlay blurring it', () => {
+    holdKeyboard()
+
+    const holder = focusedTextField()
+
+    holder.blur()
+
+    expect(holder).toHaveFocus()
+  })
+
+  it('leaves the trap to other fields once the keyboard is handed over', () => {
+    const outsideField = document.createElement('input')
+
+    document.body.append(outsideField)
+    holdKeyboard()
+    handKeyboardTo(null)
+    outsideField.focus()
+
+    expect(sheetButton).toHaveFocus()
   })
 })

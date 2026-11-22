@@ -23,7 +23,12 @@ function buttonIn(overlay: string, button: string, text: string) {
   return match
 }
 
-type OverlayEvent = 'ionAlertDidPresent' | 'ionAlertDidDismiss' | 'ionModalDidDismiss' | 'ionActionSheetDidPresent'
+type OverlayEvent =
+  | 'ionAlertDidPresent'
+  | 'ionAlertDidDismiss'
+  | 'ionModalDidPresent'
+  | 'ionModalDidDismiss'
+  | 'ionActionSheetDidPresent'
 
 const overlayEvent = (name: OverlayEvent) =>
   new Promise((resolve) => {
@@ -44,6 +49,8 @@ export const alertShown = () => overlayEvent('ionAlertDidPresent')
 
 export const alertDismissed = () => overlayEvent('ionAlertDidDismiss')
 
+export const modalShown = () => overlayEvent('ionModalDidPresent')
+
 export const modalDismissed = () => overlayEvent('ionModalDidDismiss')
 
 export const alertHeader = () => last('ion-alert .alert-title').textContent
@@ -62,8 +69,10 @@ export function alertInput() {
   return input
 }
 
+export const typeInAlert = (text: string) => fireEvent.input(alertInput(), { target: { value: text } })
+
 export function answerAlert(text: string, button: string) {
-  fireEvent.input(alertInput(), { target: { value: text } })
+  typeInAlert(text)
   clickAlertButton(button)
 }
 
