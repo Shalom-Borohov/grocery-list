@@ -1,4 +1,4 @@
-const SINGLE = 1
+export const SINGLE = 1
 
 const AGOROT_DIGITS = 2
 

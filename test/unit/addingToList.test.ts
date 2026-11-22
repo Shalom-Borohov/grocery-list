@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { amountForNewEntry, canStepUp, isPlainAmount, stepAmount, withUnit } from '../../src/domain/amount'
+import {
+  amountForNewEntry,
+  canStepPackSize,
+  canStepUp,
+  isPlainAmount,
+  stepAmount,
+  stepPackSize,
+  withUnit,
+} from '../../src/domain/amount'
 import { entriesToPour } from '../../src/domain/pourSet'
-import { amount, entry, item, savedSet } from '../helpers/records'
+import { amount, entry, item, packOf, savedSet } from '../helpers/records'
 
 describe('the amount an item is added with', () => {
   it('is the amount taken last time, or one unit for an item never bought', () => {
@@ -41,6 +49,30 @@ describe('stepping an amount', () => {
     expect(withUnit(amount(3), 'gram')).toEqual(amount(100, 'gram'))
     expect(withUnit(amount(3), 'kilogram')).toEqual(amount(1, 'kilogram'))
     expect(withUnit(amount(3, 'liter'), 'liter')).toEqual(amount(3, 'liter'))
+  })
+})
+
+describe('a pack', () => {
+  it('starts as one pack of 2, and goes back to a plain unit without its size', () => {
+    expect(withUnit(amount(3), 'pack')).toEqual(packOf(1, 2))
+    expect(withUnit(packOf(2, 6), 'pack')).toEqual(packOf(2, 6))
+    expect(withUnit(packOf(2, 6), 'unit')).toEqual(amount(1))
+  })
+
+  it('counts packs one at a time and keeps how many are in each', () => {
+    expect(stepAmount(packOf(1, 4), 1)).toEqual(packOf(2, 4))
+    expect(stepAmount(packOf(1, 4), -1)).toEqual(packOf(1, 4))
+    expect(isPlainAmount(packOf(1, 4))).toBe(false)
+  })
+
+  it('holds between 2 and 99, one at a time', () => {
+    expect(stepPackSize(packOf(1, 4), 1)).toEqual(packOf(1, 5))
+    expect(stepPackSize(packOf(1, 2), -1)).toEqual(packOf(1, 2))
+    expect(stepPackSize(packOf(1, 99), 1)).toEqual(packOf(1, 99))
+    expect(canStepPackSize(packOf(1, 2), -1)).toBe(false)
+    expect(canStepPackSize(packOf(1, 3), -1)).toBe(true)
+    expect(canStepPackSize(packOf(1, 99), 1)).toBe(false)
+    expect(canStepPackSize(packOf(1, 98), 1)).toBe(true)
   })
 })
 

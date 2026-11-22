@@ -4,7 +4,7 @@ import { createItem, setItemPhoto } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
 import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
-import { amount, CREATED_AT } from '../helpers/records'
+import { amount, CREATED_AT, packOf } from '../helpers/records'
 import { ionElement } from '../helpers/ionic'
 import {
   alertDismissed,
@@ -86,6 +86,17 @@ describe('item page', () => {
     expect(within(card).getByText('2')).toBeVisible()
     expect(within(card).getByText('ק״ג')).toBeVisible()
     expect(within(card).getByText('פעמיים · לאחרונה 12.11 · לא היה פעם אחת')).toBeVisible()
+  })
+
+  it('reads a usual pack as packs of a size, not as a multiplication', async () => {
+    const itemId = await seedItem('עגבניות שרי', { usualAmount: packOf(2, 4) })
+
+    renderAt(`/tabs/items/item/${itemId}`)
+
+    const card = await itemCard()
+
+    expect(within(card).getByText('2 אריזות של 4')).toHaveClass('visually-hidden')
+    expect(within(card).getByText('אריזה ×4')).toHaveAttribute('aria-hidden', 'true')
   })
 
   it('says an item was never bought', async () => {

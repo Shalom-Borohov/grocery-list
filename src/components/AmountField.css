@@ -13,31 +13,3 @@
   color: var(--app-ink-soft);
   font-size: 0.875rem;
 }
-
-.amount-stepper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px;
-  border-radius: var(--app-radius-control);
-  background: var(--app-card);
-}
-
-.amount-step {
-  width: var(--app-tap);
-  height: var(--app-tap);
-  border-radius: 12px;
-  background: var(--app-ground);
-  font-size: 1.5rem;
-  font-weight: 500;
-  line-height: 1;
-}
-
-.amount-step:disabled {
-  opacity: 0.35;
-}
-
-.amount-value {
-  font-size: 1.625rem;
-  font-weight: 800;
-}

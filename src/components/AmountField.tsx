@@ -1,9 +1,10 @@
-import { UNIT_LABELS, quantityText } from '../copy/amountCopy'
+import { AMOUNT_COPY, UNIT_LABELS, quantityText } from '../copy/amountCopy'
 import { COMMON_COPY } from '../copy/common'
-import { canStepDown, canStepUp, stepAmount, withUnit } from '../domain/amount'
-import { type Amount, UNITS } from '../domain/types'
+import { canStepDown, canStepPackSize, canStepUp, stepAmount, stepPackSize, withUnit } from '../domain/amount'
+import { type Amount, type PackAmount, UNITS } from '../domain/types'
 import './AmountField.css'
 import { ChoiceGroup } from './ChoiceGroup'
+import { Stepper } from './Stepper'
 
 type AmountFieldProps = {
   label: string
@@ -15,29 +16,14 @@ export function AmountField({ label, amount, onChange }: AmountFieldProps) {
   return (
     <fieldset className="amount-field">
       <legend className="amount-field-label">{label}</legend>
-      <div className="amount-stepper">
-        <button
-          type="button"
-          className="amount-step"
-          aria-label={COMMON_COPY.less}
-          disabled={!canStepDown(amount)}
-          onClick={() => onChange(stepAmount(amount, -1))}
-        >
-          −
-        </button>
-        <output className="amount-value num" aria-live="polite">
-          {quantityText(amount.quantity)}
-        </output>
-        <button
-          type="button"
-          className="amount-step"
-          aria-label={COMMON_COPY.more}
-          disabled={!canStepUp(amount)}
-          onClick={() => onChange(stepAmount(amount, 1))}
-        >
-          +
-        </button>
-      </div>
+      <Stepper
+        valueText={quantityText(amount.quantity)}
+        lessLabel={COMMON_COPY.less}
+        moreLabel={COMMON_COPY.more}
+        canStepDown={canStepDown(amount)}
+        canStepUp={canStepUp(amount)}
+        onStep={(direction) => onChange(stepAmount(amount, direction))}
+      />
       <ChoiceGroup
         className="segmented"
         label={COMMON_COPY.unit}
@@ -45,6 +31,28 @@ export function AmountField({ label, amount, onChange }: AmountFieldProps) {
         chosen={amount.unit}
         labelOf={(unit) => UNIT_LABELS[unit]}
         onChoose={(unit) => onChange(withUnit(amount, unit))}
+      />
+      {amount.unit === 'pack' && <PackSizeField pack={amount} onChange={onChange} />}
+    </fieldset>
+  )
+}
+
+type PackSizeFieldProps = {
+  pack: PackAmount
+  onChange: (amount: Amount) => void
+}
+
+function PackSizeField({ pack, onChange }: PackSizeFieldProps) {
+  return (
+    <fieldset className="amount-field">
+      <legend className="amount-field-label">{AMOUNT_COPY.packSize}</legend>
+      <Stepper
+        valueText={quantityText(pack.packSize)}
+        lessLabel={AMOUNT_COPY.fewerInPack}
+        moreLabel={AMOUNT_COPY.moreInPack}
+        canStepDown={canStepPackSize(pack, -1)}
+        canStepUp={canStepPackSize(pack, 1)}
+        onStep={(direction) => onChange(stepPackSize(pack, direction))}
       />
     </fieldset>
   )

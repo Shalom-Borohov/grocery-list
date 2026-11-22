@@ -24,7 +24,7 @@ function UsualAmount({ item }: { item: Item }) {
       {parts && (
         <>
           <span className="visually-hidden">{ITEM_COPY.usualAmount}</span>
-          <AmountColumn numeral={parts.numeral} unitLabel={parts.unitLabel} size="large" />
+          <AmountColumn numeral={parts.numeral} unitLabel={parts.unitLabel} spoken={parts.spokenUnlikeShown} size="large" />
         </>
       )}
     </div>

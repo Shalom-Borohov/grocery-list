@@ -7,7 +7,7 @@ import { resetDb } from '../helpers/db'
 import { expectElementsInOrder, sheetOf, swipeOption } from '../helpers/ionic'
 import { modalDismissed } from '../helpers/overlays'
 import { fakeShrunkPhoto, PHOTO_URL, stubObjectUrls } from '../helpers/photo'
-import { amount } from '../helpers/records'
+import { amount, packOf } from '../helpers/records'
 import { currentPath, renderAt } from '../helpers/renderAt'
 
 const NOW = 1_700_000_000_000
@@ -45,6 +45,18 @@ describe('the list', () => {
     expect(screen.getByText('ביצים')).toBeVisible()
     expect(screen.getByRole('heading', { level: 1, name: 'רשימה' })).toBeInTheDocument()
     expect(screen.getByText('2 מצרכים')).toBeVisible()
+  })
+
+  it('shows a pack as the number of packs, with how many are in each under it', async () => {
+    await addToList(await createItem('סבון מוצק', NOW), NOW, packOf(1, 4))
+    await addToList(await createItem('טישו', NOW), NOW + 1, packOf(3, 10))
+
+    renderAt('/tabs/list')
+
+    const soap = await screen.findByRole('button', { name: 'כמות ומחיר: סבון מוצק · 1 אריזה של 4' })
+
+    expect(soap).toHaveTextContent(/^1אריזה ×4$/)
+    expect(screen.getByRole('button', { name: 'כמות ומחיר: טישו · 3 אריזות של 10' })).toHaveTextContent(/^3אריזה ×10$/)
   })
 
   it('shows a quiet "1" in the amount column of a plain amount, so the way into the sheet is never blank', async () => {

@@ -25,6 +25,7 @@ type AmountColumnSize = 'row' | 'large'
 type AmountColumnProps = {
   numeral: string
   unitLabel?: string
+  spoken?: string
   size: AmountColumnSize
 }
 
@@ -35,35 +36,51 @@ const NUMERAL_CLASSES: Record<AmountColumnSize, string> = {
 
 const UNIT_CLASSES: Record<AmountColumnSize, string> = { row: 'amount-unit', large: 'amount-unit is-large' }
 
-export function AmountColumn({ numeral, unitLabel, size }: AmountColumnProps) {
+export function AmountColumn({ numeral, unitLabel, spoken, size }: AmountColumnProps) {
+  const isReadAsSpoken = spoken !== undefined
+
   return (
     <>
-      <span className={NUMERAL_CLASSES[size]}>{numeral}</span>
-      {unitLabel && <span className={UNIT_CLASSES[size]}>{unitLabel}</span>}
+      {isReadAsSpoken && <span className="visually-hidden">{spoken}</span>}
+      <span className={NUMERAL_CLASSES[size]} aria-hidden={isReadAsSpoken || undefined}>
+        {numeral}
+      </span>
+      {unitLabel && (
+        <span className={UNIT_CLASSES[size]} aria-hidden={isReadAsSpoken || undefined}>
+          {unitLabel}
+        </span>
+      )}
     </>
   )
 }
 
 type AmountColumnOfProps = {
   amount: Amount
-  showsPlainAmount: boolean
+  isTappable: boolean
 }
 
-function AmountColumnOf({ amount, showsPlainAmount }: AmountColumnOfProps) {
+function AmountColumnOf({ amount, isTappable }: AmountColumnOfProps) {
   const parts = amountParts(amount)
 
   if (!parts) {
-    return showsPlainAmount && <span className="amount-numeral num is-quiet">{quantityText(amount.quantity)}</span>
+    return isTappable && <span className="amount-numeral num is-quiet">{quantityText(amount.quantity)}</span>
   }
 
-  return <AmountColumn numeral={parts.numeral} unitLabel={parts.unitLabel} size="row" />
+  return (
+    <AmountColumn
+      numeral={parts.numeral}
+      unitLabel={parts.unitLabel}
+      spoken={isTappable ? undefined : parts.spokenUnlikeShown}
+      size="row"
+    />
+  )
 }
 
 export function LabelRow(props: LabelRowProps) {
   const { name, secondary, amount, column, photoId, isTaken, trailing, end, pressed, onTap, onColumnTap } = props
   const nameId = useId()
   const secondaryId = useId()
-  const columnContent = column ?? (amount && <AmountColumnOf amount={amount} showsPlainAmount={onColumnTap !== undefined} />)
+  const columnContent = column ?? (amount && <AmountColumnOf amount={amount} isTappable={onColumnTap !== undefined} />)
   const columnLabel = joinParts([props.columnLabel, amount && amountText(amount)])
 
   const body = (

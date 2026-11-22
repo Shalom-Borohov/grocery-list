@@ -3,7 +3,9 @@ import {
   boolean,
   check,
   type InferOutput,
+  integer,
   is,
+  literal,
   maxValue,
   minLength,
   minValue,
@@ -15,6 +17,7 @@ import {
   string,
   transform,
   trim,
+  variant,
 } from 'valibot'
 import { isPriceAmount } from './price'
 
@@ -24,9 +27,17 @@ const SMALLEST_QUANTITY = 0.001
 
 export const LARGEST_QUANTITY = 10_000
 
-export const UNITS = ['unit', 'kilogram', 'gram', 'liter'] as const
+const MEASURED_UNITS = ['unit', 'kilogram', 'gram', 'liter'] as const
+
+export type MeasuredUnit = (typeof MEASURED_UNITS)[number]
+
+export const UNITS = ['unit', 'pack', 'kilogram', 'gram', 'liter'] as const
 
 export type Unit = (typeof UNITS)[number]
+
+export const SMALLEST_PACK_SIZE = 2
+
+const LARGEST_PACK_SIZE = 99
 
 export const VERDICTS = ['again', 'never'] as const
 
@@ -52,12 +63,20 @@ const optionalTextSchema = optional(
 
 const priceSchema = pipe(number(), check(isPriceAmount))
 
-export const amountSchema = object({
-  quantity: pipe(number(), minValue(SMALLEST_QUANTITY), maxValue(LARGEST_QUANTITY)),
-  unit: picklist(UNITS),
-})
+const quantitySchema = pipe(number(), minValue(SMALLEST_QUANTITY), maxValue(LARGEST_QUANTITY))
+
+const packSizeSchema = pipe(number(), integer(), minValue(SMALLEST_PACK_SIZE), maxValue(LARGEST_PACK_SIZE))
+
+export const isPackSize = (packSize: number) => is(packSizeSchema, packSize)
+
+export const amountSchema = variant('unit', [
+  object({ quantity: quantitySchema, unit: picklist(MEASURED_UNITS) }),
+  object({ quantity: pipe(quantitySchema, integer()), unit: literal('pack'), packSize: packSizeSchema }),
+])
 
 export type Amount = InferOutput<typeof amountSchema>
+
+export type PackAmount = Extract<Amount, { unit: 'pack' }>
 
 export const itemSchema = object({
   id: string(),

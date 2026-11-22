@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { takenTotal } from '../../src/domain/takenTotal'
-import { amount, entry } from '../helpers/records'
+import { amount, entry, packOf } from '../helpers/records'
 
 describe('the total of what was taken', () => {
   it('adds each taken row as its price for one unit times its amount', () => {
@@ -10,6 +10,14 @@ describe('the total of what was taken', () => {
     ])
 
     expect(estimate).toEqual({ total: 27.15, pricedCount: 2 })
+  })
+
+  it('counts a pack row as its price for one pack times the number of packs', () => {
+    const estimate = takenTotal([
+      entry({ id: 'soap', itemId: 'soap', state: 'taken', amount: packOf(2, 4), price: 19.9 }),
+    ])
+
+    expect(estimate.total).toBe(39.8)
   })
 
   it('counts a row weighed in grams once, since its price is for the whole pack', () => {
