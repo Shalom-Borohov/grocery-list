@@ -1,7 +1,9 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem, updateItem } from '../../src/data/itemsRepo'
-import { addToList, toggleTaken } from '../../src/data/listRepo'
+import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
+import { allRecords } from '../../src/data/recordsContext'
+import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
 import { modalDismissed, toastMessages } from '../helpers/overlays'
 import { listedItemNames, pickerTree, renderPicker, search } from '../helpers/picker'
@@ -147,6 +149,22 @@ describe('add picker', () => {
     expect(screen.queryByText(/נוספו/)).not.toBeInTheDocument()
   })
 
+  it('disables the button of a set with no items', async () => {
+    await createItem('חלב', CREATED_AT)
+    await seedSet('ריקה', [], CREATED_AT)
+
+    renderPicker()
+
+    const emptySetButton = await screen.findByRole('button', { name: 'ריקה · 0' })
+
+    expect(emptySetButton).toBeDisabled()
+
+    fireEvent.click(emptySetButton)
+    await act(async () => {})
+
+    expect(toastMessages()).toEqual([])
+  })
+
   it('shows the verdict and the usual amount on a row, and still adds a "לא לקנות שוב" item', async () => {
     const yogurtId = await createItem('יוגורט', CREATED_AT)
 
@@ -223,6 +241,60 @@ describe('add picker', () => {
 
     await screen.findByRole('button', { name: 'חלב' })
     expect(screen.queryByText(/נוספו/)).not.toBeInTheDocument()
+  })
+
+  it('puts a row taken off and added back in the same opening back exactly as it was, without counting it', async () => {
+    const milkId = await createItem('חלב', CREATED_AT)
+    const entryId = await addToList(milkId, CREATED_AT)
+
+    await toggleMissing(entryId)
+    await finishShopping({ receipts: [] }, CREATED_AT + 1)
+    await updateEntry(entryId, { amount: amount(3), price: 7.5 })
+
+    const [tunedRow] = (await allRecords()).entries
+
+    renderPicker()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'חלב', pressed: true }))
+
+    const takenOffRow = await screen.findByRole('button', { name: 'חלב', pressed: false })
+
+    expect(takenOffRow.closest('.label-row')?.querySelector('.amount-numeral')).toHaveTextContent('3')
+    expect(takenOffRow).toHaveAccessibleDescription('לא היה בפעם שעברה')
+
+    fireEvent.click(takenOffRow)
+    await screen.findByRole('button', { name: 'חלב', pressed: true })
+
+    expect((await allRecords()).entries).toEqual([tunedRow])
+    expect(screen.queryByText(/נוספו/)).not.toBeInTheDocument()
+  })
+
+  it('makes a new row for an item taken off in an earlier opening', async () => {
+    const milkId = await createItem('חלב', CREATED_AT)
+    const entryId = await addToList(milkId, CREATED_AT)
+
+    await updateEntry(entryId, { amount: amount(3), price: 7.5 })
+
+    const onDismiss = vi.fn()
+    const { rerender } = renderPicker(onDismiss)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'חלב', pressed: true }))
+    await screen.findByRole('button', { name: 'חלב', pressed: false })
+
+    const dismissed = modalDismissed()
+
+    rerender(pickerTree(false, onDismiss))
+    await dismissed
+    rerender(pickerTree(true, onDismiss))
+
+    fireEvent.click(await screen.findByRole('button', { name: 'חלב', pressed: false }))
+    await screen.findByRole('button', { name: 'חלב', pressed: true })
+
+    const [newRow] = (await allRecords()).entries
+
+    expect(newRow.id).not.toBe(entryId)
+    expect(newRow.amount).toEqual(amount(1))
+    expect(newRow.price).toBeUndefined()
   })
 
   it('leaves an item already taken in the shop on the list', async () => {

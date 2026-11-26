@@ -1,4 +1,5 @@
 import { COMMON_COPY } from '../../../copy/common'
+import { canPour } from '../../../domain/pourSet'
 import { setsInOrder } from '../../../domain/setEntries'
 import type { SavedSet } from '../../../domain/types'
 import { PICKER_COPY } from './copy'
@@ -14,7 +15,13 @@ export function SetButtons({ sets, onPour }: SetButtonsProps) {
       <h2 className="section-heading">{COMMON_COPY.sets}</h2>
       <div className="picker-sets">
         {setsInOrder(sets).map((savedSet) => (
-          <button key={savedSet.id} type="button" className="outline-button picker-set" onClick={() => onPour(savedSet.id)}>
+          <button
+            key={savedSet.id}
+            type="button"
+            className="outline-button picker-set"
+            disabled={!canPour(savedSet)}
+            onClick={() => onPour(savedSet.id)}
+          >
             {PICKER_COPY.setButton(savedSet.name, savedSet.entries.length)}
           </button>
         ))}

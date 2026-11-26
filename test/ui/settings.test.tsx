@@ -27,6 +27,6 @@ describe('settings', () => {
     expect(await screen.findByText('2 מצרכים · קנייה אחת · 2 תמונות')).toBeVisible()
     expect(screen.getByRole('heading', { level: 1, name: 'הגדרות' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'ייצוא גיבוי' })).toBeVisible()
-    expect(screen.getByText(/^גרסה 0\.11\.0/)).toBeInTheDocument()
+    expect(screen.getByText(/^גרסה 0\.11\.1/)).toBeInTheDocument()
   })
 })
