@@ -53,8 +53,8 @@ function PickerBody({ records, searchInput, ref, onDismiss }: PickerBodyProps) {
   const timesTaken = useMemo(() => timesTakenByItem(records.trips), [records.trips])
   const usualIds = useMemo(() => usualItemIds(records.trips), [records.trips])
   const entryByItem = new Map(records.entries.map((listEntry) => [listEntry.itemId, listEntry]))
-  const { addedCount, toggleItem, createAndAdd, addTyped, pour } = usePickerActions(records.entries)
-  const rowsProps = { entryByItem, onToggle: toggleItem }
+  const { addedCount, takenOffEntries, toggleItem, createAndAdd, addTyped, pour } = usePickerActions(records.entries)
+  const rowsProps = { entryByItem, takenOffByItem: takenOffEntries, onToggle: toggleItem }
   const scrollHidesKeyboard = useFingerScrollHidesKeyboard(searchInput)
 
   const [isResultTapped, setResultTapped] = useState(false)
@@ -98,6 +98,7 @@ function PickerBody({ records, searchInput, ref, onDismiss }: PickerBodyProps) {
               query={query}
               onCreate={create}
               entryByItem={entryByItem}
+              takenOffByItem={takenOffEntries}
               onToggle={toggleResult}
             />
           ) : (

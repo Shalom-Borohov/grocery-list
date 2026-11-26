@@ -44,11 +44,8 @@
 
 .item-facts {
   margin: 4px 0 0;
-  overflow: hidden;
   color: var(--app-ink-soft);
   font-size: 0.8125rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .item-photo-button {
@@ -107,28 +104,30 @@
 }
 
 .price-list {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 10px;
   margin: 0;
   padding: 0 var(--app-gutter);
   list-style: none;
 }
 
 .price-row {
-  display: flex;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 10px;
   min-height: 30px;
 }
 
 .price-date {
-  flex: none;
-  width: 48px;
+  min-width: 48px;
   color: var(--app-ink-soft);
   font-size: 0.875rem;
   text-align: end;
 }
 
 .price-track {
-  flex: 1;
   height: 10px;
   border-radius: 5px;
   background: var(--app-taken-ground);
@@ -148,7 +147,6 @@
 }
 
 .price-amount {
-  flex: none;
   width: 64px;
   font-size: 0.9375rem;
   font-weight: 500;

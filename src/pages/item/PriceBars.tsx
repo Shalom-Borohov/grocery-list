@@ -10,10 +10,16 @@ const NEWEST_INDEX = 0
 
 const barWidth = (share: number) => `${Math.round(share * PERCENT)}%`
 
-function PriceRow({ point, isNewest }: { point: PricePoint; isNewest: boolean }) {
+type PriceRowProps = {
+  point: PricePoint
+  isNewest: boolean
+  today: string
+}
+
+function PriceRow({ point, isNewest, today }: PriceRowProps) {
   return (
     <li className="price-row">
-      <span className="price-date num">{dateOf(point.finishedAt)}</span>
+      <span className="price-date num">{dateOf(point.finishedAt, today)}</span>
       <span className="price-track" aria-hidden="true">
         <span className={isNewest ? 'price-bar is-newest' : 'price-bar'} style={{ width: barWidth(point.share) }} />
       </span>
@@ -23,7 +29,7 @@ function PriceRow({ point, isNewest }: { point: PricePoint; isNewest: boolean })
   )
 }
 
-export function PriceBars({ prices }: { prices: PricePoint[] }) {
+export function PriceBars({ prices, today }: { prices: PricePoint[]; today: string }) {
   const headingId = useId()
 
   return (
@@ -36,7 +42,7 @@ export function PriceBars({ prices }: { prices: PricePoint[] }) {
       ) : (
         <ul className="price-list" aria-labelledby={headingId}>
           {prices.map((point, index) => (
-            <PriceRow key={point.finishedAt} point={point} isNewest={index === NEWEST_INDEX} />
+            <PriceRow key={point.finishedAt} point={point} isNewest={index === NEWEST_INDEX} today={today} />
           ))}
         </ul>
       )}

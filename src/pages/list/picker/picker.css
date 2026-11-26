@@ -59,6 +59,10 @@
   font-size: 1rem;
 }
 
+.picker-set:disabled {
+  opacity: var(--app-disabled-opacity);
+}
+
 .picker-plus {
   width: 36px;
   height: 36px;

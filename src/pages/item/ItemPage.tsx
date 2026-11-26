@@ -1,6 +1,7 @@
 import { IonContent, IonPage } from '@ionic/react'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useToday } from '../../components/useToday'
 import { useRecords } from '../../data/hooks'
 import { itemHistory } from '../../domain/itemHistory'
 import type { Item, Records } from '../../domain/types'
@@ -21,13 +22,14 @@ type ItemDetailsProps = {
 
 function ItemDetails({ item, records, onEdit }: ItemDetailsProps) {
   const history = itemHistory(item.id, records.trips)
+  const today = useToday()
 
   return (
     <>
       <IonContent>
         <div className="page-body item-page">
-          <ItemCard item={item} history={history} onEdit={onEdit} />
-          <PriceBars prices={history.prices} />
+          <ItemCard item={item} history={history} today={today} onEdit={onEdit} />
+          <PriceBars prices={history.prices} today={today} />
           <DeleteItemButton item={item} />
         </div>
       </IonContent>

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createItem, setItemPhoto } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
 import { finishShopping } from '../../src/data/tripsRepo'
+import { freezeDate } from '../helpers/clock'
 import { resetDb } from '../helpers/db'
 import { amount, CREATED_AT, packOf } from '../helpers/records'
 import { ionElement } from '../helpers/ionic'
@@ -31,6 +32,10 @@ const OCTOBER_15 = new Date(2026, 9, 15, 18).getTime()
 const OCTOBER_29 = new Date(2026, 9, 29, 18).getTime()
 
 const NOVEMBER_12 = new Date(2026, 10, 12, 18).getTime()
+
+const LAST_YEAR_NOVEMBER_20 = new Date(2025, 10, 20, 18).getTime()
+
+const TODAY = new Date(2026, 10, 17, 9).getTime()
 
 type Outcome = { price?: number; isMissing?: boolean }
 
@@ -72,6 +77,7 @@ async function itemCard() {
 describe('item page', () => {
   beforeEach(resetDb)
   stubObjectUrls()
+  freezeDate(TODAY)
 
   it('shows the name, the usual amount and how often it was bought and missing', async () => {
     const itemId = await addTomatoes()
@@ -145,6 +151,24 @@ describe('item page', () => {
     expect(rows.map((row) => row.textContent)).toEqual(['12.11המחיר האחרון₪8.90', '29.10₪9.90', '15.10₪7.90'])
     expect(rows[1].querySelector('.price-bar')).toHaveStyle({ width: '100%' })
     expect(rows[0].querySelector('.price-bar')).toHaveStyle({ width: '90%' })
+  })
+
+  it('adds the year to a date from an earlier year, row by row', async () => {
+    const itemId = await addTomatoes()
+
+    await shop(itemId, LAST_YEAR_NOVEMBER_20, { price: 7.9 })
+
+    renderAt(`/tabs/items/item/${itemId}`)
+
+    expect(within(await itemCard()).getByText('פעם אחת · לאחרונה 20.11.25')).toBeVisible()
+
+    await shop(itemId, NOVEMBER_12, { price: 8.9 })
+
+    expect(await within(await itemCard()).findByText('פעמיים · לאחרונה 12.11')).toBeVisible()
+
+    const rows = within(screen.getByRole('list', { name: 'מחירים' })).getAllByRole('listitem')
+
+    expect(rows.map((row) => row.textContent)).toEqual(['12.11המחיר האחרון₪8.90', '20.11.25₪7.90'])
   })
 
   it('says when no price was recorded yet', async () => {
