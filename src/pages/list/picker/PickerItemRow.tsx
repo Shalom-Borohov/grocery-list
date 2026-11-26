@@ -9,19 +9,21 @@ type ToggleItem =(item: Item, onList: ListEntry | undefined) => void
 
 export type PickerRowsProps = {
   entryByItem: Map<string, ListEntry>
+  takenOffByItem: ReadonlyMap<string, ListEntry>
   onToggle: ToggleItem
 }
 
-export function PickerItemRow({ item, entryByItem, onToggle }: PickerRowsProps & { item: Item }) {
+export function PickerItemRow({ item, entryByItem, takenOffByItem, onToggle }: PickerRowsProps & { item: Item }) {
   const onList = entryByItem.get(item.id)
   const isAdded = onList !== undefined
-  const line = secondaryLine(item, onList)
+  const shownEntry = onList ?? takenOffByItem.get(item.id)
+  const line = secondaryLine(item, shownEntry)
 
   return (
     <li>
       <LabelRow
         name={item.name}
-        amount={onList?.amount ?? amountForNewEntry(item)}
+        amount={shownEntry?.amount ?? amountForNewEntry(item)}
         secondary={line && <SecondaryText line={line} />}
         photoId={item.photoId}
         isTaken={onList?.state === 'taken'}

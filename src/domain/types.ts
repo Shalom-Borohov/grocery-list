@@ -99,6 +99,7 @@ export const listEntrySchema = object({
   price: optional(priceSchema),
   missedLastTrip: optional(boolean()),
   takenAt: optional(number()),
+  takenFromMissing: optional(boolean()),
 })
 
 export type ListEntry = InferOutput<typeof listEntrySchema>

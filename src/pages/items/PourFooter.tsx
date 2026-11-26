@@ -1,6 +1,7 @@
 import { IonFooter } from '@ionic/react'
 import { usePourSet } from '../../components/usePourSet'
 import { COMMON_COPY } from '../../copy/common'
+import { canPour } from '../../domain/pourSet'
 import type { SavedSet } from '../../domain/types'
 
 export function PourFooter({ savedSet }: { savedSet: SavedSet }) {
@@ -11,7 +12,7 @@ export function PourFooter({ savedSet }: { savedSet: SavedSet }) {
       <button
         type="button"
         className="primary-button set-pour-button"
-        disabled={savedSet.entries.length === 0}
+        disabled={!canPour(savedSet)}
         onClick={() => pour(savedSet.id)}
       >
         {COMMON_COPY.addToList}

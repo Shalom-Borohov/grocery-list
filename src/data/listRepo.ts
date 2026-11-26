@@ -30,16 +30,27 @@ export const addToList = (itemId: string, now: number, amount?: ListEntry['amoun
 
 const putEntry = (entry: ListEntry) => db.listEntries.put(parse(listEntrySchema, entry))
 
+function takenEntry(entry: ListEntry, now: number): ListEntry {
+  const taken: ListEntry = { ...entry, state: 'taken', takenAt: now }
+
+  return entry.state === 'missing' ? { ...taken, takenFromMissing: true } : taken
+}
+
+const takenBackEntry = ({ takenAt: _takenAt, takenFromMissing, ...entry }: ListEntry): ListEntry => ({
+  ...entry,
+  state: takenFromMissing ? 'missing' : 'waiting',
+})
+
 export const toggleTaken = (entryId: string, now: number) =>
   db.transaction('rw', db.listEntries, async () => {
-    const { takenAt: _takenAt, ...entry } = await existingEntry(entryId)
+    const entry = await existingEntry(entryId)
 
-    await putEntry(entry.state === 'taken' ? { ...entry, state: 'waiting' } : { ...entry, state: 'taken', takenAt: now })
+    await putEntry(entry.state === 'taken' ? takenBackEntry(entry) : takenEntry(entry, now))
   })
 
 export const toggleMissing = (entryId: string) =>
   db.transaction('rw', db.listEntries, async () => {
-    const { takenAt: _takenAt, ...entry } = await existingEntry(entryId)
+    const { takenAt: _takenAt, takenFromMissing: _takenFromMissing, ...entry } = await existingEntry(entryId)
 
     await putEntry({ ...entry, state: entry.state === 'missing' ? 'waiting' : 'missing' })
   })
@@ -53,11 +64,29 @@ export const updateEntry = (entryId: string, changes: EntryChanges) =>
 
 export const removeEntry = (entryId: string) => db.listEntries.delete(entryId)
 
+export const putBackEntry = (entry: ListEntry) =>
+  db.transaction('rw', db.items, db.listEntries, async () => {
+    const listed = await listedEntry(entry.itemId)
+
+    if (listed) {
+      return listed.id
+    }
+
+    existing(await db.items.get(entry.itemId), 'item', entry.itemId)
+    await db.listEntries.add(parse(listEntrySchema, entry))
+
+    return entry.id
+  })
+
 type PointOutcome = 'pointed' | 'unchanged' | 'alreadyListed'
 
 export const pointEntryAt = (entryId: string, name: string, now: number) =>
   db.transaction('rw', db.items, db.listEntries, async (): Promise<PointOutcome> => {
-    const { missedLastTrip: _missedLastTrip, ...entry } = await existingEntry(entryId)
+    const {
+      missedLastTrip: _missedLastTrip,
+      takenFromMissing: _takenFromMissing,
+      ...entry
+    } = await existingEntry(entryId)
     const itemId = await createItem(name, now)
     const listed = await listedEntry(itemId)
 
