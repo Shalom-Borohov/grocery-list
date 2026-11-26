@@ -1,5 +1,6 @@
 import { IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs } from '@ionic/react'
 import { Navigate, Route } from 'react-router-dom'
+import { UpdateBar } from './appUpdate/UpdateBar'
 import { ItemsIcon, ListIcon, SettingsIcon, TripsIcon } from './components/icons'
 import { COMMON_COPY } from './copy/common'
 import { ITEMS_PATH, LIST_PATH, SETTINGS_PATH, TRIPS_PATH } from './navigation/paths'
@@ -26,6 +27,7 @@ export function Tabs() {
         <Route path="settings" element={<SettingsPage />} />
         <Route index element={<Navigate to="list" replace />} />
       </IonRouterOutlet>
+      <UpdateBar />
       <IonTabBar slot="bottom" className="shelf-tab-bar">
         <IonTabButton tab="list" href={LIST_PATH}>
           <ListIcon />

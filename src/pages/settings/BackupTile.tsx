@@ -1,7 +1,8 @@
 import { useRef } from 'react'
+import { BACKUP_FILE_ACCEPT } from '../../components/backupFile'
 import { ImportIcon, ShareIcon } from '../../components/icons'
+import { COMMON_COPY } from '../../copy/common'
 import { useRecords } from '../../data/hooks'
-import { BACKUP_FILE_ACCEPT } from './backupFile'
 import { SETTINGS_COPY } from './copy'
 import { useBackupExport } from './useBackupExport'
 import { useBackupRestore } from './useBackupRestore'
@@ -32,16 +33,16 @@ export function BackupTile() {
       <BackupCounts />
       {fileAwaitingTap ? (
         <div className="settings-ready" role="status">
-          <span>{SETTINGS_COPY.backupReady}</span>
+          <span>{COMMON_COPY.backupReady}</span>
           <button type="button" className="primary-button settings-action" onClick={() => void shareAgain(fileAwaitingTap)}>
             <ShareIcon />
-            {SETTINGS_COPY.share}
+            {COMMON_COPY.share}
           </button>
         </div>
       ) : (
         <button type="button" className="primary-button settings-action" onClick={() => void exportData()}>
           <ShareIcon />
-          {SETTINGS_COPY.exportBackup}
+          {COMMON_COPY.exportBackup}
         </button>
       )}
       <button type="button" className="quiet-button settings-action" onClick={() => fileInput.current?.click()}>

@@ -1,7 +1,7 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { resetDb } from '../helpers/db'
-import { modalDismissed } from '../helpers/overlays'
+import { modalDismissed, shownSheetName } from '../helpers/overlays'
 import { renderAt } from '../helpers/renderAt'
 
 const ISSUES_URL = 'https://github.com/Shalom-Borohov/grocery-list/issues/new'
@@ -39,6 +39,7 @@ describe('feedback', () => {
 
     await openReport()
 
+    await waitFor(() => expect(shownSheetName()).toBe('דיווח'))
     expect(openInGitHub()).toBeDisabled()
     expect(screen.getByText(/הרשימות והתמונות לא נשלחות/)).toBeVisible()
 

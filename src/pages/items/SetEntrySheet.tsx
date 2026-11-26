@@ -1,6 +1,7 @@
-import { IonContent, IonModal } from '@ionic/react'
+import { IonContent } from '@ionic/react'
 import { AmountField } from '../../components/AmountField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { COMMON_COPY } from '../../copy/common'
 import { type SetItem, withAmount, withoutItem } from '../../domain/setEntries'
 import type { SetEntry } from '../../domain/types'
@@ -20,7 +21,7 @@ export function SetEntrySheet({ row, entries, onChange, onClose }: SetEntrySheet
   }
 
   return (
-    <IonModal isOpen={row !== undefined} onDidDismiss={onClose}>
+    <SheetModal name={row?.item.name} isOpen={row !== undefined} onDidDismiss={onClose}>
       {row && (
         <>
           <SheetHeader title={row.item.name} end={{ text: COMMON_COPY.close, onTap: onClose }} />
@@ -38,6 +39,6 @@ export function SetEntrySheet({ row, entries, onChange, onClose }: SetEntrySheet
           </IonContent>
         </>
       )}
-    </IonModal>
+    </SheetModal>
   )
 }

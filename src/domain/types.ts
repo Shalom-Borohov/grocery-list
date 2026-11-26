@@ -2,6 +2,7 @@ import {
   array,
   boolean,
   check,
+  custom,
   type InferOutput,
   integer,
   is,
@@ -148,10 +149,18 @@ export type Records = {
   sets: SavedSet[]
 }
 
-export type StoredPhoto = {
-  id: string
-  bytes: ArrayBuffer
-}
+const ARRAY_BUFFER_TAG = '[object ArrayBuffer]'
+
+const isArrayBuffer = (bytes: unknown) => Object.prototype.toString.call(bytes) === ARRAY_BUFFER_TAG
+
+const storedPhotoSchema = object({
+  id: string(),
+  bytes: custom<ArrayBuffer>(isArrayBuffer),
+})
+
+export type StoredPhoto = InferOutput<typeof storedPhotoSchema>
+
+export const isStoredPhoto = (row: unknown): row is StoredPhoto => is(storedPhotoSchema, row)
 
 export type ShrunkPhoto = {
   photo: ArrayBuffer

@@ -1,8 +1,9 @@
-import { IonContent, IonModal } from '@ionic/react'
+import { IonContent } from '@ionic/react'
 import { useState } from 'react'
 import { LabelRow } from '../../components/LabelRow'
 import { SearchField } from '../../components/SearchField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { TickRing } from '../../components/TickRing'
 import { COMMON_COPY } from '../../copy/common'
 import { byName, matchesSearch } from '../../domain/itemNames'
@@ -29,7 +30,7 @@ export function SetItemsSheet({ isOpen, items, entries, onChange, onClose }: Set
   }
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={closed}>
+    <SheetModal name={ITEMS_COPY.addItems} isOpen={isOpen} onDidDismiss={closed}>
       <SheetHeader title={ITEMS_COPY.addItems} end={{ text: COMMON_COPY.done, onTap: onClose }} />
       <IonContent>
         <div className="set-picker">
@@ -56,6 +57,6 @@ export function SetItemsSheet({ isOpen, items, entries, onChange, onClose }: Set
           </ul>
         </div>
       </IonContent>
-    </IonModal>
+    </SheetModal>
   )
 }
