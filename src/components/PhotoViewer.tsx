@@ -1,8 +1,9 @@
-import { IonContent, IonModal } from '@ionic/react'
+import { IonContent } from '@ionic/react'
 import { COMMON_COPY } from '../copy/common'
 import { usePhotoUrl } from '../photo/usePhotoUrl'
 import './PhotoViewer.css'
 import { SheetHeader } from './SheetHeader'
+import { SheetModal } from './SheetModal'
 
 export type ShownPhoto = {
   photoId: string
@@ -25,7 +26,7 @@ export function FullPhoto({ photoId, alt, className }: FullPhotoProps) {
 
 export function PhotoViewer({ photo, onClose }: PhotoViewerProps) {
   return (
-    <IonModal isOpen={photo !== undefined} onDidDismiss={onClose}>
+    <SheetModal name={photo?.title} isOpen={photo !== undefined} onDidDismiss={onClose}>
       {photo && (
         <>
           <SheetHeader title={photo.title} end={{ text: COMMON_COPY.close, onTap: onClose }} />
@@ -34,6 +35,6 @@ export function PhotoViewer({ photo, onClose }: PhotoViewerProps) {
           </IonContent>
         </>
       )}
-    </IonModal>
+    </SheetModal>
   )
 }

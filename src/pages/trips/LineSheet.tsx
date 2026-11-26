@@ -1,6 +1,7 @@
-import { IonContent, IonModal, useIonRouter } from '@ionic/react'
+import { IonContent, useIonRouter } from '@ionic/react'
 import { PriceField } from '../../components/PriceField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { useAction } from '../../components/useAction'
 import { VerdictSwitch } from '../../components/VerdictSwitch'
 import { COMMON_COPY } from '../../copy/common'
@@ -71,13 +72,14 @@ function LineForm({ tripId, line, onClose }: LineFormProps) {
 
 export function LineSheet({ tripId, line, onClose }: LineSheetProps) {
   return (
-    <IonModal
+    <SheetModal
+      name={line && lineName(line)}
       isOpen={line !== undefined}
       breakpoints={SHEET_BREAKPOINTS}
       initialBreakpoint={SHEET_HEIGHT}
       onDidDismiss={onClose}
     >
       {line && <LineForm key={line.lineIndex} tripId={tripId} line={line} onClose={onClose} />}
-    </IonModal>
+    </SheetModal>
   )
 }

@@ -3,6 +3,7 @@ import { IonReactHashRouter } from '@ionic/react-router'
 import { Navigate, Route } from 'react-router-dom'
 import { RecordsProvider } from './data/RecordsProvider'
 import { LIST_PATH } from './navigation/paths'
+import { RecoveryBoundary } from './recovery/RecoveryBoundary'
 import { Tabs } from './Tabs'
 
 export function AppRoutes() {
@@ -16,12 +17,14 @@ export function AppRoutes() {
 
 export function App() {
   return (
-    <IonApp>
-      <RecordsProvider>
-        <IonReactHashRouter>
-          <AppRoutes />
-        </IonReactHashRouter>
-      </RecordsProvider>
-    </IonApp>
+    <RecoveryBoundary>
+      <IonApp>
+        <RecordsProvider>
+          <IonReactHashRouter>
+            <AppRoutes />
+          </IonReactHashRouter>
+        </RecordsProvider>
+      </IonApp>
+    </RecoveryBoundary>
   )
 }

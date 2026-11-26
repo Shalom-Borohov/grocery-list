@@ -1,9 +1,10 @@
-import { IonContent, IonModal } from '@ionic/react'
+import { IonContent } from '@ionic/react'
 import { useState } from 'react'
 import { AmountField } from '../../components/AmountField'
 import { NoteField } from '../../components/NoteField'
 import { PhotoSection } from '../../components/PhotoSection'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { SheetPhoto } from '../../components/SheetPhoto'
 import { TextField } from '../../components/TextField'
 import { useAction } from '../../components/useAction'
@@ -65,8 +66,8 @@ function EditItemForm({ item, onClose }: Omit<EditItemSheetProps, 'isOpen'>) {
 
 export function EditItemSheet({ item, isOpen, onClose }: EditItemSheetProps) {
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onClose}>
+    <SheetModal name={COMMON_COPY.edit} isOpen={isOpen} onDidDismiss={onClose}>
       <EditItemForm item={item} onClose={onClose} />
-    </IonModal>
+    </SheetModal>
   )
 }

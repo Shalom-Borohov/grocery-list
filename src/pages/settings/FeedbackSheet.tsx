@@ -1,8 +1,9 @@
-import { IonContent, IonModal } from '@ionic/react'
+import { IonContent } from '@ionic/react'
 import { useState } from 'react'
 import { ChoiceGroup } from '../../components/ChoiceGroup'
 import { NoteField } from '../../components/NoteField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { COMMON_COPY } from '../../copy/common'
 import { SETTINGS_COPY } from './copy'
 import { FEEDBACK_KINDS, type FeedbackKind, feedbackLink } from './feedbackUrl'
@@ -74,8 +75,8 @@ function FeedbackForm({ onClose }: Pick<FeedbackSheetProps, 'onClose'>) {
 
 export function FeedbackSheet({ isOpen, onClose }: FeedbackSheetProps) {
   return (
-    <IonModal isOpen={isOpen} backdropDismiss={false} onDidDismiss={onClose}>
+    <SheetModal name={SETTINGS_COPY.report} isOpen={isOpen} backdropDismiss={false} onDidDismiss={onClose}>
       <FeedbackForm onClose={onClose} />
-    </IonModal>
+    </SheetModal>
   )
 }

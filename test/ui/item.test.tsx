@@ -14,6 +14,7 @@ import {
   alertShown,
   clickAlertButton,
   modalDismissed,
+  shownSheetName,
   toastMessages,
 } from '../helpers/overlays'
 import { cameraPhoto, PHOTO_URL, shrunkPhoto, stubObjectUrls } from '../helpers/photo'
@@ -201,6 +202,7 @@ describe('item page', () => {
     expect(await screen.findByText('הוספת הערה')).toBeVisible()
 
     await openEditSheet()
+    await waitFor(() => expect(shownSheetName()).toBe('עריכה'))
     fireEvent.change(screen.getByLabelText('שם'), { target: { value: '  עגבניות שרי מתוקות ' } })
     fireEvent.click(screen.getByRole('button', { name: 'יותר' }))
     fireEvent.change(screen.getByLabelText('הערה'), { target: { value: 'רק מהאריזה הסגורה' } })
