@@ -3,13 +3,19 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '../../src/data/db'
 import { freezeDate } from '../helpers/clock'
 import { resetDb } from '../helpers/db'
-import { expectInOrder } from '../helpers/ionic'
+import { expectElementsInOrder, expectInOrder } from '../helpers/ionic'
 import { currentPath, renderAt } from '../helpers/renderAt'
 import { line, trip } from '../helpers/records'
 
 const NOVEMBER = 10
 
 const OCTOBER = 9
+
+const SEPTEMBER = 8
+
+const DECEMBER = 11
+
+const JANUARY = 0
 
 const at = (month: number, day: number, year = 2026) => new Date(year, month, day, 18).getTime()
 
@@ -102,6 +108,39 @@ describe('קניות', () => {
     ])
     expect(within(rows[1]).getByText('לא היה 1')).toHaveClass('warning-word')
     await expectInOrder(['5', 'אוקטובר', '29'])
+  })
+
+  it('files a trip under the day and the month it was finished, however early its first tick was', async () => {
+    await db.trips.bulkAdd([
+      trip({ id: 'nov-1', startedAt: at(OCTOBER, 31), finishedAt: at(NOVEMBER, 1), total: 50 }),
+      trip({ id: 'oct-1', startedAt: at(SEPTEMBER, 30), finishedAt: at(OCTOBER, 1), total: 30 }),
+    ])
+
+    renderAt('/tabs/trips')
+
+    const block = await screen.findByRole('region', { name: 'נובמבר' })
+
+    expect(within(block).getByText('₪50')).toBeVisible()
+    expect(within(block).getByText('קנייה אחת · ממוצע ₪50')).toBeVisible()
+
+    const rows = await screen.findAllByRole('link')
+
+    expect(rows.map((row) => row.textContent)).toEqual(['1א׳0 מצרכים₪50', '1ה׳0 מצרכים₪30'])
+    expectElementsInOrder([rows[0], screen.getByRole('heading', { name: 'אוקטובר' }), rows[1]])
+    expect(screen.queryByText('ספטמבר')).not.toBeInTheDocument()
+  })
+
+  it('counts a trip in the year it was finished, however early its first tick was', async () => {
+    await db.trips.add(trip({ id: 'jan-1', startedAt: at(DECEMBER, 31, 2025), finishedAt: at(JANUARY, 1), total: 40 }))
+
+    renderAt('/tabs/trips')
+    await screen.findByRole('region', { name: 'נובמבר' })
+    fireEvent.click(screen.getByRole('button', { name: 'שנה' }))
+
+    const block = await screen.findByRole('region', { name: '2026' })
+
+    expect(within(block).getByText('₪40')).toBeVisible()
+    expect(within(block).getByText('קנייה אחת · ממוצע ₪40')).toBeVisible()
   })
 
   it('opens a trip when its row is tapped', async () => {
