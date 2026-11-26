@@ -89,7 +89,7 @@ describe('shopping from the list', () => {
     expect(rowNames()).toEqual(['חלב', 'ביצים', 'קפה'])
   })
 
-  it('takes an item the shop did not have with one tap on its ring, and a second tap leaves it waiting', async () => {
+  it('takes an item the shop did not have with one tap on its ring, and a second tap marks it "לא היה" again', async () => {
     const [milk] = await shopWith(['חלב', 'ביצים'])
 
     await toggleMissing((await entryOf(milk)).id)
@@ -103,7 +103,9 @@ describe('shopping from the list', () => {
     fireEvent.click(ring('חלב'))
 
     await waitFor(() => expect(ring('חלב')).toHaveAttribute('aria-pressed', 'false'))
-    expect((await entryOf(milk)).state).toBe('waiting')
+    expect((await entryOf(milk)).state).toBe('missing')
+    expect(rowBody('חלב')).toHaveAccessibleDescription('לא היה')
+    expect(screen.getByRole('button', { name: 'סיום' })).toBeVisible()
   })
 
   it('changes the amount and marks the item missing from the sheet the amount column opens', async () => {

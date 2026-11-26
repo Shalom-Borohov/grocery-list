@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useAction } from '../../../components/useAction'
 import { usePourSet } from '../../../components/usePourSet'
 import { createItem } from '../../../data/itemsRepo'
-import { addToList, removeEntry } from '../../../data/listRepo'
+import { addToList, putBackEntry, removeEntry } from '../../../data/listRepo'
 import { tapTakesOff } from '../../../domain/pickerOrder'
 import type { Item, ListEntry } from '../../../domain/types'
 
 export function usePickerActions(entries: ListEntry[]) {
   const [addedItemIds, setAddedItemIds] = useState<ReadonlySet<string>>(new Set())
+  const [takenOffEntries, setTakenOffEntries] = useState<ReadonlyMap<string, ListEntry>>(new Map())
   const run = useAction()
   const listedItemIds = new Set(entries.map(({ itemId }) => itemId))
   const addedCount = [...addedItemIds].filter((itemId) => listedItemIds.has(itemId)).length
@@ -17,6 +18,14 @@ export function usePickerActions(entries: ListEntry[]) {
   const pour = usePourSet(markAdded)
 
   async function addItem(itemId: string, now: number) {
+    const takenOff = takenOffEntries.get(itemId)
+
+    if (takenOff) {
+      await putBackEntry(takenOff)
+
+      return
+    }
+
     const wasListed = listedItemIds.has(itemId)
 
     await addToList(itemId, now)
@@ -34,6 +43,7 @@ export function usePickerActions(entries: ListEntry[]) {
     }
 
     if (tapTakesOff(onList)) {
+      setTakenOffEntries((previous) => new Map(previous).set(onList.itemId, onList))
       run(() => removeEntry(onList.id))
     }
   }
@@ -56,5 +66,5 @@ export function usePickerActions(entries: ListEntry[]) {
     createAndAdd(typedName, onAdded)
   }
 
-  return { addedCount, toggleItem, createAndAdd, addTyped, pour }
+  return { addedCount, takenOffEntries, toggleItem, createAndAdd, addTyped, pour }
 }

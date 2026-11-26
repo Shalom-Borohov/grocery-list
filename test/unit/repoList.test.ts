@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { allRecords } from '../../src/data/recordsContext'
-import { createItem } from '../../src/data/itemsRepo'
+import { createItem, deleteItem } from '../../src/data/itemsRepo'
 import {
   addToList,
   pointEntryAt,
+  putBackEntry,
   removeEntry,
   toggleMissing,
   toggleTaken,
@@ -56,6 +57,31 @@ describe('the list', () => {
     expect(putBack.takenAt).toBeUndefined()
   })
 
+  it('puts "לא היה" back when an item the shop did not have is taken and then taken back', async () => {
+    const entryId = await addToList(await createItem('טחינה', NOW), NOW)
+
+    await toggleMissing(entryId)
+    await toggleTaken(entryId, NOW + 1)
+    expect((await allRecords()).entries[0]).toMatchObject({ state: 'taken', takenAt: NOW + 1 })
+
+    await toggleTaken(entryId, NOW + 2)
+    const [putBack] = (await allRecords()).entries
+
+    expect(putBack.state).toBe('missing')
+    expect(putBack.takenAt).toBeUndefined()
+  })
+
+  it('leaves a row moved to another item waiting when its tick is taken back, since the miss was the old item\'s', async () => {
+    const entryId = await addToList(await createItem('חלב תנובה', NOW), NOW)
+
+    await toggleMissing(entryId)
+    await toggleTaken(entryId, NOW + 1)
+    await pointEntryAt(entryId, 'חלב טרה', NOW + 2)
+    await toggleTaken(entryId, NOW + 3)
+
+    expect((await allRecords()).entries[0].state).toBe('waiting')
+  })
+
   it('marks an item the shop did not have, and takes the mark back', async () => {
     const entryId = await addToList(await createItem('טחינה', NOW), NOW)
 
@@ -73,6 +99,37 @@ describe('the list', () => {
     expect((await allRecords()).entries[0]).toMatchObject({ amount: amount(1.5, 'kilogram'), price: 6.9 })
 
     await removeEntry(entryId)
+    expect((await allRecords()).entries).toEqual([])
+  })
+
+  it('puts a removed row back as it was, unless its item is on the list again', async () => {
+    const milk = await createItem('חלב', NOW)
+    const entryId = await addToList(milk, NOW)
+
+    await updateEntry(entryId, { amount: amount(3), price: 7.5 })
+
+    const [removed] = (await allRecords()).entries
+
+    await removeEntry(entryId)
+    expect(await putBackEntry(removed)).toBe(entryId)
+    expect((await allRecords()).entries).toEqual([removed])
+
+    await removeEntry(entryId)
+    const relistedId = await addToList(milk, NOW + 1)
+
+    expect(await putBackEntry(removed)).toBe(relistedId)
+    expect((await allRecords()).entries.map(({ id }) => id)).toEqual([relistedId])
+  })
+
+  it('refuses to put back a row whose item was deleted meanwhile', async () => {
+    const milk = await createItem('חלב', NOW)
+    const entryId = await addToList(milk, NOW)
+    const [removed] = (await allRecords()).entries
+
+    await removeEntry(entryId)
+    await deleteItem(milk)
+
+    await expect(putBackEntry(removed)).rejects.toThrow()
     expect((await allRecords()).entries).toEqual([])
   })
 
