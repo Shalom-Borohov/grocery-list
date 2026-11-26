@@ -13,6 +13,7 @@ import { NoteBox } from './NoteBox'
 type ItemCardProps = {
   item: Item
   history: ItemHistory
+  today: string
   onEdit: () => void
 }
 
@@ -31,7 +32,7 @@ function UsualAmount({ item }: { item: Item }) {
   )
 }
 
-export function ItemCard({ item, history, onEdit }: ItemCardProps) {
+export function ItemCard({ item, history, today, onEdit }: ItemCardProps) {
   return (
     <section className="item-card panel">
       <div className="item-top-row">
@@ -40,7 +41,7 @@ export function ItemCard({ item, history, onEdit }: ItemCardProps) {
           <h1 className="item-name" dir="auto">
             {item.name}
           </h1>
-          <p className="item-facts">{itemFacts(history)}</p>
+          <p className="item-facts">{itemFacts(history, today)}</p>
         </div>
         {item.photoId ? (
           <ViewablePhoto photoId={item.photoId} name={item.name} className="item-photo-button">

@@ -7,6 +7,10 @@ const NOVEMBER = 10
 
 const OCTOBER = 9
 
+const DECEMBER = 11
+
+const JANUARY = 0
+
 const at = (month: number, day: number, year = 2026) => new Date(year, month, day, 18).getTime()
 
 const trips = newestFirst([
@@ -43,5 +47,15 @@ describe('spending', () => {
       withoutTotal: 1,
       tripIds: ['empty'],
     })
+  })
+
+  it('counts a trip in the month and the year it was finished, however early its first tick was', () => {
+    const tripsTickedTheDayBefore = newestFirst([
+      trip({ id: 'nov-1', startedAt: at(OCTOBER, 31), finishedAt: at(NOVEMBER, 1), total: 50 }),
+      trip({ id: 'jan-1', startedAt: at(DECEMBER, 31, 2025), finishedAt: at(JANUARY, 1), total: 30 }),
+    ])
+
+    expect(periodSpending(tripsTickedTheDayBefore, 'month', today).tripIds).toEqual(['nov-1'])
+    expect(periodSpending(tripsTickedTheDayBefore, 'year', today).tripIds).toEqual(['nov-1', 'jan-1'])
   })
 })
