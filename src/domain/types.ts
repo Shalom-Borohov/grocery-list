@@ -37,7 +37,7 @@ export type Unit = (typeof UNITS)[number]
 
 export const SMALLEST_PACK_SIZE = 2
 
-const LARGEST_PACK_SIZE = 99
+export const LARGEST_PACK_SIZE = 99
 
 export const VERDICTS = ['again', 'never'] as const
 
@@ -64,6 +64,8 @@ const optionalTextSchema = optional(
 const priceSchema = pipe(number(), check(isPriceAmount))
 
 const quantitySchema = pipe(number(), minValue(SMALLEST_QUANTITY), maxValue(LARGEST_QUANTITY))
+
+export const isQuantity = (quantity: number) => is(quantitySchema, quantity)
 
 const packSizeSchema = pipe(number(), integer(), minValue(SMALLEST_PACK_SIZE), maxValue(LARGEST_PACK_SIZE))
 

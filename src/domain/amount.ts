@@ -1,8 +1,8 @@
 import {
   type Amount,
   isPackSize,
+  isQuantity,
   type Item,
-  LARGEST_QUANTITY,
   type PackAmount,
   SMALLEST_PACK_SIZE,
   type Unit,
@@ -22,23 +22,42 @@ const UNIT_STARTS: Record<Unit, Amount> = {
 
 const PACK_SIZE_STEP = 1
 
-const QUANTITY_PRECISION = 1000
+export const QUANTITY_FRACTION_DIGITS = 3
+
+const QUANTITY_PRECISION = 10 ** QUANTITY_FRACTION_DIGITS
+
+const FRACTION_UNITS: ReadonlySet<Unit> = new Set(['kilogram', 'liter'])
+
+const WHOLE_TEXT_PATTERN = /^\d+$/
+
+const FRACTION_TEXT_PATTERN = new RegExp(
+  `^(\\d+([.,]\\d{0,${QUANTITY_FRACTION_DIGITS}})?|[.,]\\d{1,${QUANTITY_FRACTION_DIGITS}})$`,
+)
+
+const DECIMAL_COMMA = ','
+
+const DECIMAL_POINT = '.'
+
+export const INVALID_AMOUNT = 'invalid'
+
+export type ParsedNumber = number | undefined | typeof INVALID_AMOUNT
 
 const roundQuantity = (quantity: number) => Math.round(quantity * QUANTITY_PRECISION) / QUANTITY_PRECISION
 
 export type StepDirection = 1 | -1
 
-export function stepAmount(amount: Amount, direction: StepDirection): Amount {
-  const { quantity, unit } = amount
-  const step = UNIT_STEPS[unit]
-  const stepped = roundQuantity(quantity + direction * step)
+const steppedQuantity = ({ quantity, unit }: Amount, direction: StepDirection) =>
+  roundQuantity(quantity + direction * UNIT_STEPS[unit])
 
-  return { ...amount, quantity: stepped < step || stepped > LARGEST_QUANTITY ? quantity : stepped }
+const canStep = (amount: Amount, direction: StepDirection) => isQuantity(steppedQuantity(amount, direction))
+
+export function stepAmount(amount: Amount, direction: StepDirection): Amount {
+  return canStep(amount, direction) ? { ...amount, quantity: steppedQuantity(amount, direction) } : amount
 }
 
-export const canStepDown = ({ quantity, unit }: Amount) => quantity - UNIT_STEPS[unit] >= UNIT_STEPS[unit]
+export const canStepDown = (amount: Amount) => canStep(amount, -1)
 
-export const canStepUp = ({ quantity, unit }: Amount) => roundQuantity(quantity + UNIT_STEPS[unit]) <= LARGEST_QUANTITY
+export const canStepUp = (amount: Amount) => canStep(amount, 1)
 
 const steppedPackSize = ({ packSize }: PackAmount, direction: StepDirection) => packSize + direction * PACK_SIZE_STEP
 
@@ -49,6 +68,29 @@ export function stepPackSize(pack: PackAmount, direction: StepDirection): PackAm
 
   return isPackSize(packSize) ? { ...pack, packSize } : pack
 }
+
+export const allowsFraction = (unit: Unit) => FRACTION_UNITS.has(unit)
+
+function parseNumberText(text: string, pattern: RegExp, isAllowed: (parsed: number) => boolean): ParsedNumber {
+  const trimmed = text.trim()
+
+  if (!trimmed) {
+    return undefined
+  }
+
+  if (!pattern.test(trimmed)) {
+    return INVALID_AMOUNT
+  }
+
+  const parsed = Number(trimmed.replace(DECIMAL_COMMA, DECIMAL_POINT))
+
+  return isAllowed(parsed) ? parsed : INVALID_AMOUNT
+}
+
+export const parseQuantityText = (text: string, unit: Unit) =>
+  parseNumberText(text, allowsFraction(unit) ? FRACTION_TEXT_PATTERN : WHOLE_TEXT_PATTERN, isQuantity)
+
+export const parsePackSizeText = (text: string) => parseNumberText(text, WHOLE_TEXT_PATTERN, isPackSize)
 
 export const withUnit = (amount: Amount, unit: Unit): Amount => (amount.unit === unit ? amount : UNIT_STARTS[unit])
 
