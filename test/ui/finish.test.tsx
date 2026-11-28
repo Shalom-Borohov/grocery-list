@@ -4,7 +4,7 @@ import { createItem } from '../../src/data/itemsRepo'
 import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/data/listRepo'
 import { allRecords } from '../../src/data/recordsContext'
 import { resetDb } from '../helpers/db'
-import { modalDismissed, toastMessages } from '../helpers/overlays'
+import { modalDismissed, shownSheetName, toastMessages } from '../helpers/overlays'
 import { cameraPhoto, PHOTO_URL, stubObjectUrls } from '../helpers/photo'
 import { renderAt } from '../helpers/renderAt'
 
@@ -43,6 +43,7 @@ describe('finishing a trip', () => {
   it('cannot save while the total is not a valid price, so a number nobody sees is never filed', async () => {
     await shopTakingMilkWithoutCoffee()
     await openFinishSheet()
+    await waitFor(() => expect(shownSheetName()).toBe('סיום הקנייה'))
 
     const total = screen.getByRole('textbox', { name: 'סכום' })
 

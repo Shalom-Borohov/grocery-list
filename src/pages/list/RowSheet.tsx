@@ -1,9 +1,10 @@
-import { IonContent, IonModal, useIonRouter } from '@ionic/react'
+import { IonContent, useIonRouter } from '@ionic/react'
 import { AddableNote } from '../../components/AddableNote'
 import { AmountField } from '../../components/AmountField'
 import { PhotoSection } from '../../components/PhotoSection'
 import { PriceField } from '../../components/PriceField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { SheetPhoto } from '../../components/SheetPhoto'
 import { useAction } from '../../components/useAction'
 import { VerdictSwitch } from '../../components/VerdictSwitch'
@@ -96,14 +97,15 @@ const SHEET_BREAKPOINTS = [CLOSED_BREAKPOINT, SHEET_HEIGHT]
 
 export function RowSheet({ row, trips, modalProps, onClose }: RowSheetProps) {
   return (
-    <IonModal
+    <SheetModal
       {...modalProps}
+      name={row?.item.name}
       isOpen={modalProps.isOpen && row !== undefined}
       breakpoints={SHEET_BREAKPOINTS}
       initialBreakpoint={SHEET_HEIGHT}
       expandToScroll={false}
     >
       {row && <RowSheetContent row={row} trips={trips} onClose={onClose} />}
-    </IonModal>
+    </SheetModal>
   )
 }

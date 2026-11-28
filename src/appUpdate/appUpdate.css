@@ -1,0 +1,59 @@
+.update-bar {
+  position: relative;
+  z-index: 10;
+  padding-block: 8px;
+  padding-inline: var(--app-gutter);
+  background: var(--app-ground);
+}
+
+ion-tabs:has(ion-tab-bar.tab-bar-hidden) .update-bar {
+  display: none;
+}
+
+.update-bar-card {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--app-row-height);
+  padding-inline: 4px 8px;
+  border-radius: var(--app-radius-row);
+  background: var(--app-card);
+  box-shadow: var(--app-shadow-raised);
+  box-sizing: border-box;
+}
+
+.update-bar-dismiss {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--app-tap);
+  height: var(--app-tap);
+  border-radius: 50%;
+  color: var(--app-ink-soft);
+}
+
+.update-bar-dismiss svg {
+  width: 12px;
+  height: 12px;
+}
+
+.update-bar-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.update-bar-apply {
+  flex: none;
+  min-height: var(--app-tap);
+  padding-inline: 18px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-yellow);
+  color: var(--app-ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}

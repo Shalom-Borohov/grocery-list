@@ -53,6 +53,9 @@ export const modalShown = () => overlayEvent('ionModalDidPresent')
 
 export const modalDismissed = () => overlayEvent('ionModalDidDismiss')
 
+export const shownSheetName = () =>
+  document.querySelector('ion-modal.show-modal')?.shadowRoot?.querySelector('[role="dialog"]')?.getAttribute('aria-label')
+
 export const alertHeader = () => last('ion-alert .alert-title').textContent
 
 export const alertMessage = () => last('ion-alert .alert-message').textContent

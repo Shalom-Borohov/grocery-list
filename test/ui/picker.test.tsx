@@ -5,7 +5,7 @@ import { addToList, toggleMissing, toggleTaken, updateEntry } from '../../src/da
 import { allRecords } from '../../src/data/recordsContext'
 import { finishShopping } from '../../src/data/tripsRepo'
 import { resetDb } from '../helpers/db'
-import { modalDismissed, toastMessages } from '../helpers/overlays'
+import { modalDismissed, shownSheetName, toastMessages } from '../helpers/overlays'
 import { listedItemNames, pickerTree, renderPicker, search } from '../helpers/picker'
 import { amount, CREATED_AT } from '../helpers/records'
 import { finishTripTaking, seedSet } from '../helpers/seed'
@@ -45,6 +45,7 @@ describe('add picker', () => {
     await screen.findByRole('heading', { name: 'כל המצרכים' })
 
     expect(rowNames(section('כל המצרכים'))).toEqual(['ביצים', 'חלב', 'אורז'])
+    await waitFor(() => expect(shownSheetName()).toBe('הוספה לרשימה'))
   })
 
   it('offers "בדרך כלל" from three trips on, without what is already listed', async () => {

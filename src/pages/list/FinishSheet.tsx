@@ -1,8 +1,9 @@
-import { IonContent, IonModal } from '@ionic/react'
+import { IonContent } from '@ionic/react'
 import { useState } from 'react'
 import { NoteField } from '../../components/NoteField'
 import { PriceField } from '../../components/PriceField'
 import { SheetHeader } from '../../components/SheetHeader'
+import { SheetModal } from '../../components/SheetModal'
 import { useAction } from '../../components/useAction'
 import { useMessageToast } from '../../components/useMessageToast'
 import { COMMON_COPY } from '../../copy/common'
@@ -70,8 +71,8 @@ function FinishForm({ counts, entries, onClose }: Omit<FinishSheetProps, 'isOpen
 
 export function FinishSheet({ isOpen, ...rest }: FinishSheetProps) {
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={rest.onClose}>
+    <SheetModal name={LIST_COPY.finishTitle} isOpen={isOpen} onDidDismiss={rest.onClose}>
       <FinishForm {...rest} />
-    </IonModal>
+    </SheetModal>
   )
 }

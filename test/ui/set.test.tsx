@@ -12,6 +12,7 @@ import {
   answerAlert,
   clickAlertButton,
   modalDismissed,
+  shownSheetName,
   toastMessages,
 } from '../helpers/overlays'
 import { amount, CREATED_AT, packOf } from '../helpers/records'
@@ -89,6 +90,7 @@ describe('set page', () => {
 
     const amountField = await screen.findByRole('group', { name: 'כמות' })
 
+    await waitFor(() => expect(shownSheetName()).toBe('חלב'))
     fireEvent.click(within(amountField).getByRole('button', { name: 'יותר' }))
 
     await waitFor(async () =>
@@ -136,6 +138,7 @@ describe('set page', () => {
 
     const picker = await screen.findByRole('list', { name: 'מצרכים לערכה' })
 
+    await waitFor(() => expect(shownSheetName()).toBe('הוספת מצרכים'))
     expect(within(picker).getByRole('button', { name: 'חלב' })).toHaveAttribute('aria-pressed', 'true')
     expect(within(picker).getByRole('button', { name: 'קפה' })).toHaveAttribute('aria-pressed', 'false')
 

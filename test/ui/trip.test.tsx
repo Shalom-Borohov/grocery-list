@@ -5,7 +5,15 @@ import { addTripReceipt } from '../../src/data/tripsRepo'
 import type { Trip } from '../../src/domain/types'
 import { freezeDate } from '../helpers/clock'
 import { resetDb } from '../helpers/db'
-import { alertHeader, alertShown, answerAlert, clickAlertButton, modalDismissed, toastMessages } from '../helpers/overlays'
+import {
+  alertHeader,
+  alertShown,
+  answerAlert,
+  clickAlertButton,
+  modalDismissed,
+  shownSheetName,
+  toastMessages,
+} from '../helpers/overlays'
 import { cameraPhoto, PHOTO_URL, SHRUNK_PHOTO_BYTES, shrunkPhoto, stubObjectUrls } from '../helpers/photo'
 import { amount, item, line, trip } from '../helpers/records'
 import { currentPath, renderAt } from '../helpers/renderAt'
@@ -131,6 +139,7 @@ describe('a trip', () => {
 
       const price = await screen.findByRole('textbox', { name: 'מחיר' })
 
+      await waitFor(() => expect(shownSheetName()).toBe('חלב'))
       expect(price).toHaveValue('6.90')
 
       fireEvent.change(price, { target: { value: '7.50' } })
@@ -210,6 +219,7 @@ describe('a trip', () => {
       fireEvent.click(await screen.findByRole('button', { name: 'קבלה 1' }))
 
       expect(await screen.findByRole('img', { name: 'קבלה 1' })).toHaveAttribute('src', PHOTO_URL)
+      await waitFor(() => expect(shownSheetName()).toBe('קבלה 1'))
 
       const dismissed = modalDismissed()
 

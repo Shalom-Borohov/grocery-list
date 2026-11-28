@@ -1,8 +1,16 @@
 import { strFromU8, strToU8, unzipSync, Zip, ZipDeflate, ZipPassThrough } from 'fflate'
 import { array, type InferOutput, literal, number, object, parse, parseJson, pipe, string } from 'valibot'
-import { itemSchema, listEntrySchema, savedSetSchema, type StoredPhoto, tripSchema } from '../domain/types'
+import {
+  isStoredPhoto,
+  itemSchema,
+  listEntrySchema,
+  savedSetSchema,
+  type StoredPhoto,
+  tripSchema,
+} from '../domain/types'
 import { allTables, db } from './db'
 import { revokePhotoUrls } from './photoUrls'
+import { readRawStoredData } from './rawStoredData'
 
 const BACKUP_VERSION = 1
 
@@ -74,25 +82,37 @@ function zipWriter() {
   return { addStored, addDeflated, finish }
 }
 
+type StoredRecords = Record<keyof Omit<BackupFile, 'version' | 'exportedAt'>, unknown[]>
+
+function zipBackup(now: number, records: StoredRecords, photos: StoredPhoto[], thumbnails: StoredPhoto[]) {
+  const writer = zipWriter()
+
+  writer.addDeflated(DATA_FILE, strToU8(JSON.stringify({ version: BACKUP_VERSION, exportedAt: now, ...records })))
+  photos.forEach(({ id, bytes }) => writer.addStored(photoPath(id), bytes))
+  thumbnails.forEach(({ id, bytes }) => writer.addStored(thumbnailPath(id), bytes))
+
+  return writer.finish()
+}
+
 export const exportBackup = (now: number) =>
   db.transaction('r', allTables(), async () => {
-    const writer = zipWriter()
-
-    const backupFile: BackupFile = {
-      version: BACKUP_VERSION,
-      exportedAt: now,
+    const records = {
       items: await db.items.toArray(),
       listEntries: await db.listEntries.toArray(),
       trips: await db.trips.toArray(),
       sets: await db.sets.toArray(),
     }
 
-    writer.addDeflated(DATA_FILE, strToU8(JSON.stringify(backupFile)))
-    await db.photos.each(({ id, bytes }) => writer.addStored(photoPath(id), bytes))
-    await db.thumbnails.each(({ id, bytes }) => writer.addStored(thumbnailPath(id), bytes))
-
-    return writer.finish()
+    return zipBackup(now, records, await db.photos.toArray(), await db.thumbnails.toArray())
   })
+
+export async function exportRawBackup(now: number) {
+  const { records, photos, thumbnails } = await readRawStoredData()
+
+  return zipBackup(now, records, photos.filter(isStoredPhoto), thumbnails.filter(isStoredPhoto))
+}
+
+export const exportStoredData = (now: number) => (db.hasFailed() ? exportRawBackup(now) : exportBackup(now))
 
 class NotABackupError extends Error {
   constructor() {

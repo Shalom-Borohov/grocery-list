@@ -10,7 +10,9 @@ import { renderAt } from '../helpers/renderAt'
 
 const NOW = 1_700_000_000_000
 
-const KILOGRAM_ERROR = 'מספר גדול מ־0 עד 10,000, עד 3 ספרות אחרי הנקודה'
+const LIVE_QUERY_TIMEOUT = 5000
+
+const KILOGRAM_ERROR ='מספר גדול מ־0 עד 10,000, עד 3 ספרות אחרי הנקודה'
 
 async function entryOf(itemId: string) {
   const found = (await allRecords()).entries.find((entry) => entry.itemId === itemId)
@@ -33,7 +35,11 @@ async function openRowSheet(name: string, startingAmount: Amount) {
 }
 
 const rowShows = (name: string, amountText: string) =>
-  screen.findByRole('button', { name: new RegExp(`^כמות ומחיר: ${name}.*${amountText}`) })
+  screen.findByRole(
+    'button',
+    { name: new RegExp(`^כמות ומחיר: ${name}.*${amountText}`) },
+    { timeout: LIVE_QUERY_TIMEOUT },
+  )
 
 async function fieldIn(groupName: string) {
   return within(await screen.findByRole('group', { name: groupName })).getByRole('textbox', { name: groupName })

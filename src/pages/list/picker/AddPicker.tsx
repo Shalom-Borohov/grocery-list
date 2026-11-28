@@ -1,7 +1,8 @@
-import { IonContent, IonHeader, IonModal } from '@ionic/react'
+import { IonContent, IonHeader } from '@ionic/react'
 import { type Ref, type RefObject, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { handKeyboardTo } from '../../../components/keyboardHold'
 import { SearchField } from '../../../components/SearchField'
+import { SheetModal } from '../../../components/SheetModal'
 import { useRecords } from '../../../data/hooks'
 import type { Item, ListEntry, Records } from '../../../domain/types'
 import { timesTakenByItem, usualItemIds } from '../../../domain/usualHints'
@@ -122,7 +123,8 @@ export function AddPicker({ isOpen, onDismiss }: AddPickerProps) {
   const pickerBody = useRef<PickerBodyHandle>(null)
 
   return (
-    <IonModal
+    <SheetModal
+      name={PICKER_COPY.title}
       className="add-picker"
       isOpen={isOpen}
       breakpoints={SHEET_BREAKPOINTS}
@@ -135,6 +137,6 @@ export function AddPicker({ isOpen, onDismiss }: AddPickerProps) {
       {records && (
         <PickerBody ref={pickerBody} records={records} searchInput={searchInput} onDismiss={onDismiss} />
       )}
-    </IonModal>
+    </SheetModal>
   )
 }

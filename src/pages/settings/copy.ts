@@ -10,9 +10,6 @@ export const SETTINGS_COPY = {
     'הנתונים שמורים רק בטלפון הזה. הגיבוי הוא קובץ zip אחד עם המצרכים, הרשימה, הקניות, הערכות והתמונות, אז כדאי לייצא גיבוי מדי פעם.',
   counts: (items: number, trips: number, photos: number) =>
     joinParts([COMMON_COPY.itemCount(items), COMMON_COPY.tripCount(trips), COMMON_COPY.photoCount(photos)]),
-  exportBackup: 'ייצוא גיבוי',
-  backupReady: 'הגיבוי מוכן לשיתוף.',
-  share: 'שיתוף',
   restoreBackup: 'שחזור מגיבוי',
   backupFile: 'קובץ גיבוי',
   restoreWarning: 'השחזור יחליף את כל מה שבטלפון בתוכן הגיבוי. אי אפשר לבטל את זה.',
