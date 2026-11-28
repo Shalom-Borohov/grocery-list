@@ -98,6 +98,20 @@ describe('set page', () => {
     )
   })
 
+  it('types an item amount in the set', async () => {
+    const { milkId, setId } = await seedBasics()
+
+    renderAt(`/tabs/items/sets/${setId}`)
+    fireEvent.click(await screen.findByRole('button', { name: 'חלב' }))
+    fireEvent.change(within(await screen.findByRole('group', { name: 'כמות' })).getByRole('textbox', { name: 'כמות' }), {
+      target: { value: '1.5' },
+    })
+
+    await waitFor(async () =>
+      expect((await allRecords()).sets[0].entries).toContainEqual({ itemId: milkId, amount: amount(1.5, 'liter') }),
+    )
+  })
+
   it('removes an item from the set from its row', async () => {
     const { eggsId, setId } = await seedBasics()
 
